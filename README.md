@@ -102,7 +102,7 @@ mvn clean test
 | `AvailabilityTest.checkOutOnNextGuestCheckInDayIsAllowed` | Failure | BUG-M05 | #2 |
 | `AvailabilityTest.cancellationFeeAtBoundaries[7,0.00]` | Failure | BUG-M06 | #3 |
 | `AvailabilityTest.bookBackToBackRegistersSecondStay` | **Error** | BUG-M05 | #2 |
-| _(5-й Failure)_ | Failure | — | уточнити |
+| `AvailabilityTest.refundAtBoundaries[2]` | Failure | BUG-M06 | #3 |
 
 Після заливки `PriceCalculatorSeasonTest` (Вігура С.) і `BookingValidatorTest` (Бєлянцева А.)
 числа зміняться — додасться 9 червоних виконань BUG-M03 і падіння BUG-M01/M02. **Фінальні цифри
