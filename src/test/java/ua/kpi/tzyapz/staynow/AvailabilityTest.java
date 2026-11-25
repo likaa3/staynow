@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Юніт-тести класу Availability: політика скасування (BL-60) і облік зайнятості номерів (BL-70).
  * Автор: Шкарупа М. Очікувані значення виведено з README модуля (BL-60, BL-70), а не з коду.
- * Відомі «червоні» тести на v1: BUG-M05 (межа дат BL-70), BUG-M06 (межа 7 днів BL-60).
+ * Відомі «червоні» тести на v1: BUG-M05 (Issue #2, межа дат BL-70), BUG-M06 (Issue #3, межа 7 днів BL-60).
+ * Рецензія: Вігура С. (cross-review, задача 8.4); зауваження враховано.
  */
 @Tag("unit")
 @DisplayName("Availability — скасування (BL-60) і доступність номера (BL-70)")
@@ -42,10 +43,12 @@ class AvailabilityTest {
         assertEquals(new BigDecimal(expectedFee), fee);
     }
 
-    @Test
-    @DisplayName("BL-60: повернення = вартість − плата за скасування (5 днів → 50 %)")
-    void refundIsTotalMinusFee() {
-        assertEquals(new BigDecimal("500.00"), availability.refund(TOTAL, 5));
+    // BUG-M06 (Issue #3): рядок "7,1000.00" падає на v1 — побічний ефект того самого дефекту (нового звіту не потрібно).
+    @ParameterizedTest(name = "BL-60: {0} дн. до заїзду → повернення {1}")
+    @CsvSource({"10,1000.00", "7,1000.00", "6,500.00", "5,500.00", "3,500.00", "2,0.00", "0,0.00"})
+    @DisplayName("BL-60: повернення = вартість − плата на межах 7 і 3 днів (вартість 1000.00)")
+    void refundAtBoundaries(int daysBeforeCheckIn, String expectedRefund) {
+        assertEquals(new BigDecimal(expectedRefund), availability.refund(TOTAL, daysBeforeCheckIn));
     }
 
     @Test
@@ -58,8 +61,9 @@ class AvailabilityTest {
     }
 
     @Test
-    @DisplayName("BL-60: від'ємна вартість — IllegalArgumentException")
+    @DisplayName("Контракт методу (Javadoc), не BL-60: від'ємна вартість — IllegalArgumentException")
     void negativeTotalThrows() {
+        // README модуля цього не фіксує; поведінка взята з Javadoc Availability.cancellationFee.
         assertThrows(IllegalArgumentException.class,
                 () -> availability.cancellationFee(new BigDecimal("-1"), 5));
     }
@@ -84,8 +88,17 @@ class AvailabilityTest {
                 "Виїзд 15.09 має бути можливий: наступний гість заїздить 15.09");
     }
 
+    // BUG-M05 (Issue #2): падає на v1 — book відхиляє бронювання «спина до спини» (той самий дефект).
     @Test
-    @DisplayName("BL-70: перетин інтервалів — номер зайнятий, book кидає IllegalStateException")
+    @DisplayName("BL-70: бронювання 17–19.09 після 15–17.09 реєструється, у номері два бронювання")
+    void bookBackToBackRegistersSecondStay() {
+        availability.book(ROOM, LocalDate.of(2026, 9, 15), LocalDate.of(2026, 9, 17));
+        availability.book(ROOM, LocalDate.of(2026, 9, 17), LocalDate.of(2026, 9, 19));
+        assertEquals(2, availability.stays().size());
+    }
+
+    @Test
+    @DisplayName("BL-70: часткове перекриття справа (16–18.09) — номер зайнятий, book кидає IllegalStateException")
     void overlappingBookingIsRejected() {
         availability.book(ROOM, LocalDate.of(2026, 9, 15), LocalDate.of(2026, 9, 17));
         assertAll("перетин 16–18.09 з існуючим 15–17.09",
@@ -96,7 +109,28 @@ class AvailabilityTest {
     }
 
     @Test
-    @DisplayName("BL-70: новий інтервал, що повністю накриває існуюче бронювання, — номер зайнятий")
+    @DisplayName("BL-70: часткове перекриття зліва (13–16.09) — номер зайнятий")
+    void partialOverlapFromLeftIsNotAvailable() {
+        availability.book(ROOM, LocalDate.of(2026, 9, 15), LocalDate.of(2026, 9, 17));
+        assertFalse(availability.isAvailable(ROOM, LocalDate.of(2026, 9, 13), LocalDate.of(2026, 9, 16)));
+    }
+
+    @Test
+    @DisplayName("BL-70: ідентичний інтервал (15–17.09) — номер зайнятий")
+    void identicalIntervalIsNotAvailable() {
+        availability.book(ROOM, LocalDate.of(2026, 9, 15), LocalDate.of(2026, 9, 17));
+        assertFalse(availability.isAvailable(ROOM, LocalDate.of(2026, 9, 15), LocalDate.of(2026, 9, 17)));
+    }
+
+    @Test
+    @DisplayName("BL-70: новий інтервал усередині існуючого (15–16.09) — номер зайнятий")
+    void intervalInsideExistingStayIsNotAvailable() {
+        availability.book(ROOM, LocalDate.of(2026, 9, 15), LocalDate.of(2026, 9, 17));
+        assertFalse(availability.isAvailable(ROOM, LocalDate.of(2026, 9, 15), LocalDate.of(2026, 9, 16)));
+    }
+
+    @Test
+    @DisplayName("BL-70: новий інтервал, що повністю накриває існуюче бронювання (10–20.09), — номер зайнятий")
     void intervalCoveringExistingStayIsNotAvailable() {
         availability.book(ROOM, LocalDate.of(2026, 9, 15), LocalDate.of(2026, 9, 17));
         assertFalse(availability.isAvailable(ROOM, LocalDate.of(2026, 9, 10), LocalDate.of(2026, 9, 20)));
@@ -110,8 +144,9 @@ class AvailabilityTest {
     }
 
     @Test
-    @DisplayName("BL-70: виїзд не пізніший за заїзд — IllegalArgumentException")
+    @DisplayName("Контракт методів (Javadoc), не BL-70: виїзд не пізніший за заїзд — IllegalArgumentException")
     void invalidIntervalThrows() {
+        // README модуля цього не фіксує; поведінка взята з Javadoc/коду isAvailable та book.
         LocalDate day = LocalDate.of(2026, 9, 15);
         assertAll("некоректний інтервал",
                 () -> assertThrows(IllegalArgumentException.class, () -> availability.isAvailable(ROOM, day, day)),
