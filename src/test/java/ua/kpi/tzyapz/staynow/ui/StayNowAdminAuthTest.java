@@ -36,7 +36,7 @@ class StayNowAdminAuthTest extends UiTestBase {
 
     /** Кейс TC-023 (F-80): вхід адміністратора з коректними обліковими даними. */
     @Test
-    @DisplayName("TC-023: вхід admin/password відкриває дашборд адміністратора (Rooms/Report/Messages)")
+    @DisplayName("TC-023: вхід admin/password відкриває дашборд з переліком номерів (101/102/103)")
     void adminLoginOpensDashboard() {
         // arrange (облікові дані demo — спільні, admin / password, за передумовами кейсу)
         StayNowAdminLoginPage page = new StayNowAdminLoginPage(driver, wait).open();
@@ -44,7 +44,9 @@ class StayNowAdminAuthTest extends UiTestBase {
         // act
         page.login("admin", "password").waitDashboard();
 
-        // assert (ОР TC-023: завантажено панель адміністратора з розділами керування)
+        // assert (ОР TC-023: завантажено розділ керування номерами з переліком номерів —
+        // перелік 101/102/103 додано за зауваженням ТА п. 3.3; крок «Logout» не дублюється —
+        // його перевіряє окремий кейс TC-025)
         String body = page.bodyText();
         assertAll(
                 () -> assertTrue(driver.getCurrentUrl().contains("/admin/"), "адреса адмінпанелі: "
@@ -52,31 +54,36 @@ class StayNowAdminAuthTest extends UiTestBase {
                 () -> assertTrue(body.contains("Rooms"), "розділ Rooms у меню дашборда"),
                 () -> assertTrue(body.contains("Report"), "розділ Report у меню дашборда"),
                 () -> assertTrue(body.contains("Messages"), "розділ Messages у меню дашборда"),
-                () -> assertTrue(body.contains("Branding"), "розділ Branding у меню дашборда")
+                () -> assertTrue(body.contains("Branding"), "розділ Branding у меню дашборда"),
+                () -> assertTrue(body.contains("101") && body.contains("102") && body.contains("103"),
+                        "перелік номерів 101/102/103 у дашборді: "
+                                + body.substring(0, Math.min(300, body.length())))
         );
     }
 
-    /** Кейс TC-024 (F-80): неправильний пароль — повідомлення про помилку, вхід не виконано. */
+    /** Кейс TC-024 (F-80, GUI-70): неправильний пароль — вхід не виконано. */
     @Test
-    @DisplayName("TC-024: неправильний пароль — «Invalid credentials», форма входу лишається")
+    @DisplayName("TC-024: неправильний пароль (F-80, GUI-70) — «Invalid credentials», форма входу лишається")
     void wrongPasswordShowsErrorAndKeepsLoginForm() {
-        // arrange
+        // arrange (дані кейсу: admin / wrongpass1)
         StayNowAdminLoginPage page = new StayNowAdminLoginPage(driver, wait).open();
 
         // act
-        page.login("admin", "wrong_password");
+        page.login("admin", "wrongpass1");
         String error = page.waitErrorAlert();
 
-        // assert (ОР TC-024: повідомлення про помилку; вхід не виконано — форма лишається)
+        // assert (ОР TC-024: лишився на сторінці входу, доступу немає. Частину ОР «поля позначено
+        // як помилкові» demo не виконує — BUG-003 спринта 3, не перевіряється (зауваження ТА п. 3.4);
+        // повідомлення «Invalid credentials» кейс не вимагає — додаткова м'яка перевірка)
         assertAll(
                 () -> assertEquals("Invalid credentials", error, "текст помилки входу"),
                 () -> assertTrue(page.loginFormShown(), "форма входу лишається — вхід не виконано")
         );
     }
 
-    /** Кейс TC-025 (F-85): вихід адміністратора завершує сесію. */
+    /** Кейс TC-025 (F-85, S-10): вихід адміністратора завершує сесію. */
     @Test
-    @DisplayName("TC-025: Logout завершує сесію — повернення на головну, /admin знову вимагає вхід")
+    @DisplayName("TC-025: Logout (F-85, S-10) завершує сесію — повторний /admin вимагає вхід")
     void logoutTerminatesSession() {
         // arrange: вхід успішний
         StayNowAdminLoginPage page = new StayNowAdminLoginPage(driver, wait).open();
@@ -85,7 +92,10 @@ class StayNowAdminAuthTest extends UiTestBase {
         // act (поведінка demo v2.2: після Logout користувач повертається на головну сторінку)
         page.logoutAndWaitForFrontPage();
 
-        // assert (ОР TC-025: вихід виконано; повторний доступ до /admin — лише через вхід)
+        // assert (ОР TC-025: «після виходу — сторінка входу адміністратора». Demo повертає
+        // на головну — це дефект demo (BUG-001 спринта 3; реєструється в трекері з міткою demo),
+        // тому частина ОР «повернення на сторінку входу» не перевіряється; натомість перевіряється
+        // частина S-10: адмінпанель без входу недоступна — повторний /admin показує форму входу)
         assertAll(
                 () -> assertFalse(driver.getCurrentUrl().contains("/admin"),
                         "після виходу користувач не в адмінпанелі: " + driver.getCurrentUrl()),

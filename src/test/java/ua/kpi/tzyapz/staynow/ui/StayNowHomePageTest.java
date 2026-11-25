@@ -79,11 +79,14 @@ class StayNowHomePageTest extends UiTestBase {
         );
     }
 
-    /** Кейс TC-004 (F-30): «Check Availability» на вільні дати оновлює перелік номерів. */
+    /** Кейс TC-004 (F-30): «Check Availability» на вільні дати показує вільні номери. */
     @Test
-    @DisplayName("TC-004: Check Availability від обраного інтервалу оновлює посилання карток на ці дати")
+    @DisplayName("TC-004: Check Availability від обраного інтервалу оновлює перелік — картки "
+            + "Single/Double/Suite присутні, посилання ведуть на ці дати")
     void checkAvailabilityUpdatesRoomLinks() {
-        // arrange: дати рахуємо від поточної (BL-10 забороняє заїзд у минулому); інтервал у майбутньому
+        // arrange: дати рахуємо від поточної (BL-10 забороняє заїзд у минулому); інтервал у майбутньому.
+        // Формат поля дати demo — dd/MM/yyyy: фіксований формат react-datepicker, який не залежить
+        // від locale браузера (зауваження ТА п. 3.1)
         LocalDate checkIn = LocalDate.now().plusDays(30);
         LocalDate checkOut = checkIn.plusDays(2);
         StayNowHomePage page = new StayNowHomePage(driver, wait).open();
@@ -91,11 +94,14 @@ class StayNowHomePageTest extends UiTestBase {
         // act
         page.checkAvailability(checkIn, checkOut);
 
-        // assert (ОР TC-004: перелік оновлено; картки ведуть на reservation з датами РРРР-ММ-ДД)
+        // assert (ОР TC-004: перелік оновлено, присутні картки «Single», «Double», «Suite»
+        // — додано за зауваженням ТА п. 3.1; картки ведуть на reservation з датами РРРР-ММ-ДД)
         String expectedCheckIn = checkIn.format(DateTimeFormatter.ISO_DATE);
         String expectedCheckOut = checkOut.format(DateTimeFormatter.ISO_DATE);
         assertAll(
                 () -> assertEquals(3, page.roomCardCount(), "перелік номерів після перевірки доступності"),
+                () -> assertEquals(List.of("Single", "Double", "Suite"), page.roomNames(),
+                        "присутні картки «Single», «Double», «Suite» (зауваження ТА п. 3.1)"),
                 () -> assertTrue(page.roomBookHrefs().stream()
                                 .allMatch(h -> h.contains("checkin=" + expectedCheckIn)
                                         && h.contains("checkout=" + expectedCheckOut)),
@@ -128,7 +134,8 @@ class StayNowHomePageTest extends UiTestBase {
 
     /** Кейс TC-021 (F-70): тема з 4 символів (нижня межа 5 мінус 1) відхиляється. */
     @Test
-    @DisplayName("TC-021: тема із 4 символів — повідомлення не надіслано, форма лишається")
+    @DisplayName("TC-021: тема із 4 символів — повідомлення не надіслано, форма лишається "
+            + "(перелік помилок над «Submit» demo не показує — не перевіряється, дефект demo)")
     void shortSubjectIsRejected() {
         // arrange
         StayNowHomePage page = new StayNowHomePage(driver, wait).open();
@@ -139,7 +146,10 @@ class StayNowHomePageTest extends UiTestBase {
         page.submitContactForm();
         boolean thanksShown = page.waitThanksAppeared(5);
 
-        // assert (ОР TC-021: повідомлення не надіслано — подяки немає, форма лишається)
+        // assert (ОР TC-021: повідомлення не надіслано — подяки немає, форма лишається.
+        // Зауваження ТА п. 3.2: частину ОР «над Submit перелік помилок про поле Subject»
+        // demo не рендерить — не перевіряється, дефект demo; реєструється в трекері
+        // з міткою demo)
         assertAll(
                 () -> assertFalse(thanksShown, "подяки бути не має — повідомлення не надіслано"),
                 () -> assertTrue(page.contactFormStillShown(), "форма лишається на сторінці"),
@@ -150,10 +160,11 @@ class StayNowHomePageTest extends UiTestBase {
 
     /** Кейс TC-022 (F-70): повідомлення з 19 символів (нижня межа 20 мінус 1) відхиляється. */
     @Test
-    @DisplayName("TC-022: повідомлення із 19 символів — повідомлення не надіслано, форма лишається")
+    @DisplayName("TC-022: повідомлення із 19 символів — повідомлення не надіслано, форма лишається "
+            + "(перелік помилок над «Submit» demo не показує — не перевіряється, дефект demo)")
     void shortMessageIsRejected() {
         // arrange: рівно 19 символів (граничне a−1 для діапазону 20–2000)
-        String nineteenChars = "Test message 19 ch.";
+        String nineteenChars = "1234567890123456789";
         assertEquals(19, nineteenChars.length(), "тестові дані — рівно 19 символів");
         StayNowHomePage page = new StayNowHomePage(driver, wait).open();
         page.fillContactForm("Test User", "tc.tester@example.com", "01234567890",
@@ -163,7 +174,9 @@ class StayNowHomePageTest extends UiTestBase {
         page.submitContactForm();
         boolean thanksShown = page.waitThanksAppeared(5);
 
-        // assert (ОР TC-022: повідомлення не надіслано — подяки немає, форма лишається)
+        // assert (ОР TC-022: повідомлення не надіслано — подяки немає, форма лишається.
+        // Зауваження ТА п. 3.2: частину ОР «над Submit перелік помилок про поле Message»
+        // demo не рендерить — не перевіряється, дефект demo)
         assertAll(
                 () -> assertFalse(thanksShown, "подяки бути не має — повідомлення не надіслано"),
                 () -> assertTrue(page.contactFormStillShown(), "форма лишається на сторінці")

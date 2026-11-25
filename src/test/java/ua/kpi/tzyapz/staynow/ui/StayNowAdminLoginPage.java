@@ -53,11 +53,13 @@ public class StayNowAdminLoginPage {
         return this;
     }
 
-    /** Чекає завантаження дашборда адміністратора (форма входу зникає, URL → /admin/…). */
+    /** Чекає завантаження дашборда адміністратора (форма входу зникає, URL → /admin/…,
+     * дані номерів довантажуються — зникає індикатор «Loading...»). */
     public StayNowAdminLoginPage waitDashboard() {
         wait.until(ExpectedConditions.invisibilityOfElementLocated(LOGIN_BUTTON));
         wait.until(d -> d.getCurrentUrl().contains("/admin/")
                 && !d.getCurrentUrl().endsWith("/admin"));
+        wait.until(d -> !d.findElement(BODY).getText().contains("Loading..."));
         return this;
     }
 
