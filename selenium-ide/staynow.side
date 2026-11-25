@@ -1,0 +1,51 @@
+{
+  "id": "6dfc2434-f0d5-4a50-acbe-500afd56ceae",
+  "version": "2.0",
+  "name": "staynow",
+  "url": "https://automationintesting.online/",
+  "tests": [
+    {
+      "id": "a0064049-3ee2-4bf1-b758-3eb3a74befb7",
+      "name": "TC-001 TC-003 - Головна сторінка і картки номерів",
+      "commands": [
+        { "id": "8c735b18-0cb8-4296-bd81-8fda08ab923a", "comment": "", "cmd": "open", "target": "/", "targets": [], "value": "" },
+        { "id": "a7bf729e-aaed-4b68-a38a-33d4431671c9", "comment": "", "cmd": "set window size", "target": "1280x900", "targets": [], "value": "" },
+        { "id": "253d667e-4570-478e-b535-7152323cfe1c", "comment": "", "cmd": "wait for element visible", "target": "css=.room-card", "targets": ["css=.room-card"], "value": "15000" },
+        { "id": "994bc26f-2d4c-49fc-aa01-9fbabb3dcf52", "comment": "", "cmd": "assert text", "target": "css=.hero h1", "targets": ["css=.hero h1"], "value": "Welcome to Shady Meadows B&B" },
+        { "id": "6148734e-6d4a-436e-8e46-f662a9b4b07e", "comment": "", "cmd": "assert text", "target": "css=.navbar-nav .nav-link", "targets": ["css=.navbar-nav .nav-link"], "value": "Rooms" },
+        { "id": "8f85714c-b076-42bf-8775-8593d2fe3bb4", "comment": "", "cmd": "verify text", "target": "css=.hero a.btn", "targets": ["css=.hero a.btn"], "value": "Book Now" },
+        { "id": "eb7e9337-c531-49cc-9f39-09c9bc6eb0dd", "comment": "", "cmd": "assert element present", "target": "css=.room-card .card-title", "targets": ["css=.room-card .card-title"], "value": "" },
+        { "id": "46b98866-2dc0-48e9-ae1f-1c793446019a", "comment": "", "cmd": "verify text", "target": "css=#rooms .room-card .card-title", "targets": ["css=#rooms .room-card .card-title"], "value": "Single" },
+        { "id": "f98850a6-e08e-4c65-9165-ccc478fb111a", "comment": "", "cmd": "verify element present", "target": "css=.room-card a[href*='reservation']", "targets": ["css=.room-card a[href*='reservation']"], "value": "" },
+        { "id": "48f17612-6f07-47f7-942e-061bf4ef7958", "comment": "", "cmd": "assert element present", "target": "css=#contact button.btn-primary", "targets": ["css=#contact button.btn-primary"], "value": "" }
+      ]
+    },
+    {
+      "id": "6e83674a-ac02-4c48-b242-4b3224ccc604",
+      "name": "TC-023 TC-024 - Вхід адміністратора і помилка",
+      "commands": [
+        { "id": "a94a190e-abd7-4786-9d76-fc45427f7750", "comment": "", "cmd": "open", "target": "/admin", "targets": [], "value": "" },
+        { "id": "3237fd5a-e68f-4cd4-87f0-30117d27685b", "comment": "", "cmd": "wait for element visible", "target": "id=username", "targets": ["id=username", "css=#username"], "value": "15000" },
+        { "id": "26de1275-a4a8-4ae1-b801-9b60e0225162", "comment": "", "cmd": "assert text", "target": "css=.card-header h2", "targets": ["css=.card-header h2"], "value": "Login" },
+        { "id": "8be82a01-a6d3-437c-90a5-981f4ee31ac4", "comment": "", "cmd": "type", "target": "id=username", "targets": ["id=username", "css=[data-testid='ContactName']"], "value": "admin" },
+        { "id": "c5f45eab-be7c-4328-ab7e-2badbd2cd058", "comment": "", "cmd": "type", "target": "id=password", "targets": ["id=password"], "value": "wrong_password" },
+        { "id": "eb7891aa-f6a6-4480-b295-1166c997587c", "comment": "", "cmd": "click", "target": "id=doLogin", "targets": ["id=doLogin"], "value": "" },
+        { "id": "e095f26f-0024-4118-8771-8640c028e7f1", "comment": "", "cmd": "wait for element visible", "target": "css=.alert.alert-danger", "targets": ["css=.alert.alert-danger"], "value": "15000" },
+        { "id": "38146bd6-04b2-4b61-851c-c9d9a7ae5806", "comment": "", "cmd": "assert text", "target": "css=.alert.alert-danger", "targets": ["css=.alert.alert-danger"], "value": "Invalid credentials" },
+        { "id": "db1e1abc-a4f1-442f-921d-6774222336db", "comment": "", "cmd": "verify value", "target": "id=username", "targets": ["id=username"], "value": "admin" },
+        { "id": "f0ed16fd-ef7b-4802-9335-f5ea77c868b2", "comment": "", "cmd": "verify element present", "target": "css=.card-header h2", "targets": ["css=.card-header h2"], "value": "" }
+      ]
+    }
+  ],
+  "suites": [
+    {
+      "id": "b148e937-6004-46a1-9699-1eac4c10f151",
+      "name": "StayNow demo suite",
+      "persistSession": false,
+      "parallel": false,
+      "timeout": 300,
+      "tests": ["a0064049-3ee2-4bf1-b758-3eb3a74befb7", "6e83674a-ac02-4c48-b242-4b3224ccc604"]
+    }
+  ],
+  "urls": []
+}
