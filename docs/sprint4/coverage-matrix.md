@@ -10,21 +10,21 @@
 
 | BL | Правило | Межі / класи значень | Тест-клас#метод | Виконань (червоних на v1) | Дефект | Автор | Рецензент | Позначка рецензента |
 |---|---|---|---|---|---|---|---|---|
-| BL-10 | Допустиме бронювання не має помилок | 2 ночі, 2 гості з 2, заїзд за тиждень | `BookingValidatorTest#validBookingHasNoErrors` | 1 (0) | — | Бєлянцева А. | Шкарупа М. | |
-| BL-10 | Виїзд пізніший за заїзд | виїзд = заїзд; на 1 і 10 днів раніше | `BookingValidatorTest#checkOutNotAfterCheckInIsRejected` | 3 (0) | — | Бєлянцева А. | Шкарупа М. | |
-| BL-10 | Ночей 1..30 | 1, 2 · 29, **30**, 31 · 45 | `BookingValidatorTest#nightsAreAllowedFromOneToThirty` | 6 (1) | BUG-M01 | Бєлянцева А. | Шкарупа М. | |
-| BL-10 | Заїзд не раніше today | today, today+1 | `BookingValidatorTest#checkInTodayOrLaterIsAccepted` | 2 (0) | — | Бєлянцева А. | Шкарупа М. | |
-| BL-10 | Заїзд не раніше today | today−1 із виїздом today+2 і today; обидві дати в минулому | `BookingValidatorTest#checkInBeforeTodayIsRejected` | 3 (2) | BUG-M02 | Бєлянцева А. | Шкарупа М. | |
-| BL-10 | Гостей 1..місткість | 0, 1, 2, 3 при місткості 2; 4, 5 при місткості 4 | `BookingValidatorTest#guestsAreAllowedFromOneToCapacity` | 6 (0) | — | Бєлянцева А. | Шкарупа М. | |
-| BL-10 | Усі порушення повертаються разом | заїзд у минулому + 0 гостей (`assertAll`) | `BookingValidatorTest#severalViolationsAreAllReported` | 1 (0) | — | Бєлянцева А. | Шкарупа М. | |
+| BL-10 | Допустиме бронювання не має помилок | 2 ночі, 2 гості з 2, заїзд за тиждень | `BookingValidatorTest#validBookingHasNoErrors` | 1 (0) | — | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Виїзд пізніший за заїзд | виїзд = заїзд; на 1 і 10 днів раніше | `BookingValidatorTest#checkOutNotAfterCheckInIsRejected` | 3 (0) | — | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Ночей 1..30 | 1, 2 · 29, **30**, 31 · 45 | `BookingValidatorTest#nightsAreAllowedFromOneToThirty` | 6 (1) | BUG-M01 | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Заїзд не раніше today | today, today+1 | `BookingValidatorTest#checkInTodayOrLaterIsAccepted` | 2 (0) | — | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Заїзд не раніше today | today−1 із виїздом today+2 і today; обидві дати в минулому | `BookingValidatorTest#checkInBeforeTodayIsRejected` | 3 (2) | BUG-M02 | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Гостей 1..місткість | 0, 1, 2, 3 при місткості 2; 4, 5 при місткості 4 | `BookingValidatorTest#guestsAreAllowedFromOneToCapacity` | 6 (0) | — | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Усі порушення повертаються разом | заїзд у минулому + 0 гостей (`assertAll`) | `BookingValidatorTest#severalViolationsAreAllReported` | 1 (0) | — | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
 | BL-20 | Email «локальна_частина@домен.зона»; телефон «+380» і рівно 9 цифр; коди `INVALID_EMAIL`, `INVALID_PHONE` у `validate(…, email, phone)` | телефон 8 / 9 / 10 цифр після +380, без +380, код +381, з літерою; email без @, без локальної частини, без домену, без зони, з двома @, з пробілом, порожній; null | `BookingContactsTest#validEmailIsAccepted`, `#invalidEmailIsRejected`, `#phoneFormatAtBoundaries`, `#nullContactsAreRejected`, `#validateAddsContactErrors` | 18 (0) | — | Гетьман Є. | Шкарупа М. | approved 22.11 |
 | BL-30 | Вихідні ночі — з пт на сб і з сб на нд | пн…нд тижня 14–20.09.2026 (межі чт/пт і сб/нд) | `PriceCalculatorSeasonTest#weekendNightsAreFridayAndSaturday` | 7 (2) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
 | BL-30 | Надбавка 15 % за вихідну ніч | чт 100.00, пт 115.00, сб 115.00, нд 100.00 | `PriceCalculatorSeasonTest#weekendSurchargeAppliedOnFridayAndSaturdayOnly` | 4 (2) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
 | BL-40 | Високий сезон ×1,30; низький ×0,80; інший ×1,00 | 31.05/01.06, 31.08/01.09, 19/20.12, 10/11.01, 31.01/01.02, 28.02, 29.02.2028, 31.03/01.04, 31.10/01.11, 30.11/01.12 | `PriceCalculatorSeasonTest#seasonFactorAtBoundaries` | 22 (0) | — | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
 | BL-30 + BL-40 | Сезон і вихідна надбавка перемножуються | пт/сб/нд у високому та низькому сезоні | `PriceCalculatorSeasonTest#seasonAndWeekendCombine` | 6 (2) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
 | BL-40 + BL-50 | Підсумок через межу сезону | 31.08 + 01.09 (будні); 31.05 (нд) + 01.06 | `PriceCalculatorSeasonTest#totalAcrossSeasonBoundaryAugustToSeptember`, `#totalAcrossSeasonBoundaryMayToJune` | 2 (1) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
-| BL-50 | Вартість ночі, округлення `HALF_UP` до 2 знаків | 8.70 × 1,15 = 10.005 → 10.01 | `PriceCalculatorTotalTest#nightPriceRoundsHalfUp` | 1 (1) | BUG-M04 | Чаплюк Д. | Шкарупа М. | |
-| BL-50 | Підсумок = сума ночей; знижка 10 % від 7 ночей, `HALF_UP` | 6 / 7 ночей | `PriceCalculatorTotalTest` — ще 10 методів (разом із `nightPriceRoundsHalfUp` 11 методів, 20 виконань) | 19 (0) | — | Чаплюк Д. | Шкарупа М. | |
+| BL-50 | Вартість ночі, округлення `HALF_UP` до 2 знаків | 8.70 × 1,15 = 10.005 → 10.01 | `PriceCalculatorTotalTest#nightPriceRoundsHalfUp` | 1 (1) | BUG-M04 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Підсумок = сума ночей; знижка 10 % від 7 ночей, `HALF_UP` | 6 / 7 ночей | `PriceCalculatorTotalTest` — ще 10 методів (разом із `nightPriceRoundsHalfUp` 11 методів, 20 виконань) | 19 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
 | BL-60 | Плата за скасування: ≥7 днів — 0; 3..6 — 50 %; <3 — 100 % | 30, 8, **7** · 6, 3 · 2, 0 (вартість 1000.00) | `AvailabilityTest#cancellationFeeAtBoundaries` | 7 (1) | BUG-M06 | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
 | BL-60 | Повернення = вартість − плата | межі 7 / 3 днів | `AvailabilityTest#refundAtBoundaries`, `#freeCancellationRefundsEverything` | (1) | BUG-M06 | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
 | BL-70 | Номер вільний, якщо інтервали не перетинаються; виїзд у день заїзду іншого гостя дозволено | 15–17.09 і 17–19.09 («спина до спини») з обох боків; перетин 16–18.09 | `AvailabilityTest#checkInOnPreviousGuestCheckOutDayIsAllowed`, `#checkOutOnNextGuestCheckInDayIsAllowed`, `#overlappingBookingIsRejected`, `#bookBackToBackRegistersSecondStay` | (2 Failure + 1 Error) | BUG-M05 | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
@@ -38,19 +38,19 @@ BL-10 не визначає винятків: заборонений вхід п
 
 | Тест-метод | TC-ID | Вимога | Автор | Рецензент | Позначка рецензента |
 |---|---|---|---|---|---|
-| `StayNowHomePageTest#homePageShowsHotelNameBookNowAndMenu` | TC-001 | F-10 | Чаплюк Д. | Шкарупа М. | |
-| `StayNowHomePageTest#menuAnchorsAndAdminOpenLoginPage` | TC-002 | F-10 | Чаплюк Д. | Шкарупа М. | |
-| `StayNowHomePageTest#ourRoomsSectionShowsRoomCards` | TC-003 | F-20 | Чаплюк Д. | Шкарупа М. | |
-| `StayNowHomePageTest#checkAvailabilityUpdatesRoomLinks` | TC-004 | F-30 | Чаплюк Д. | Шкарупа М. | |
-| `StayNowHomePageTest#contactFormWithValidDataShowsThanks` | TC-020 | F-70, GUI-85 | Чаплюк Д. | Шкарупа М. | |
-| `StayNowHomePageTest#shortSubjectIsRejected` | TC-021 | F-70 | Чаплюк Д. | Шкарупа М. | |
-| `StayNowHomePageTest#shortMessageIsRejected` | TC-022 | F-70 | Чаплюк Д. | Шкарупа М. | |
-| `StayNowAdminAuthTest#adminLoginOpensDashboard` | TC-023 | F-80 | Чаплюк Д. | Шкарупа М. | |
-| `StayNowAdminAuthTest#wrongPasswordShowsErrorAndKeepsLoginForm` | TC-024 | F-80, GUI-70 | Чаплюк Д. | Шкарупа М. | |
-| `StayNowAdminAuthTest#logoutTerminatesSession` | TC-025 | F-85, S-10 | Чаплюк Д. | Шкарупа М. | |
-| `StayNowAdminAuthTest#adminLoginPageHeaderShowsFrontPageAndLogout` | TC-069 | GUI-70 | Чаплюк Д. | Шкарупа М. | |
-| Selenium IDE `staynow.side`: «Головна сторінка» | TC-001, TC-003 | F-10, F-20 | Чаплюк Д. | Шкарупа М. | |
-| Selenium IDE `staynow.side`: «Вхід адміністратора» | TC-023, TC-024 | F-80 | Чаплюк Д. | Шкарупа М. | |
+| `StayNowHomePageTest#homePageShowsHotelNameBookNowAndMenu` | TC-001 | F-10 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#menuAnchorsAndAdminOpenLoginPage` | TC-002 | F-10 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#ourRoomsSectionShowsRoomCards` | TC-003 | F-20 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#checkAvailabilityUpdatesRoomLinks` | TC-004 | F-30 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#contactFormWithValidDataShowsThanks` | TC-020 | F-70, GUI-85 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#shortSubjectIsRejected` | TC-021 | F-70 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#shortMessageIsRejected` | TC-022 | F-70 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowAdminAuthTest#adminLoginOpensDashboard` | TC-023 | F-80 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowAdminAuthTest#wrongPasswordShowsErrorAndKeepsLoginForm` | TC-024 | F-80, GUI-70 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowAdminAuthTest#logoutTerminatesSession` | TC-025 | F-85, S-10 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowAdminAuthTest#adminLoginPageHeaderShowsFrontPageAndLogout` | TC-069 | GUI-70 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| Selenium IDE `staynow.side`: «Головна сторінка» | TC-001, TC-003 | F-10, F-20 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| Selenium IDE `staynow.side`: «Вхід адміністратора» | TC-023, TC-024 | F-80 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
 
 ## 3. Дефекти модуля → тести
 
