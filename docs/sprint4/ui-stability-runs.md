@@ -93,7 +93,7 @@ demo https://automationintesting.online.
 | **BUG-M04 (`PriceCalculator.nightPrice`)** | **#6** | Чаплюк Д. |
 | BUG-M01 (`BookingValidator` — 30 ночей) | **#7** | likaa3, 25.11 |
 | BUG-M02 (`BookingValidator` — checkOut замість checkIn) | **#8** | likaa3, 25.11 |
-| Дефект demo (`/api/room/{id}` → HTTP 500) | створити, мітка `demo` | Чаплюк Д. |
+| Дефект demo (`/api/room/{id}` → HTTP 500) | **#10** | Чаплюк Д. |
 
 `coverage-matrix.md`: рядки BUG-M03 (→ #4), BUG-M04 (→ #6), BUG-M01 (→ #7), BUG-M02 (→ #8)
 оновити — автор матриці Бєлянцева А.
@@ -119,7 +119,7 @@ BUG-M03 ×9, BUG-M05 ×3 (2F+1E), BUG-M06 ×2, BUG-M01 ×1, BUG-M02 ×2, BUG-M04
 
 1. ✅ Виправити 5 розбіжностей UI-звірки в тестах (розд. 2) — виконано, коміт.
 2. ✅ Залити `BookingValidatorTest.java` (Бєлянцева А., 22 / 3 F) — виконано; Issues #7/#8 створені.
-3. ⏳ Створити Issue дефекту demo (мітка `demo`) — дефект BUG-001 спринта 3 на новій версії demo.
+3. ✅ Створити Issue дефекту demo — виконано: **Issue #10** (мітка `demo`) — дефект BUG-001 спринта 3 на новій версії demo.
 4. ⏳ `coverage-matrix.md`: BUG-M04 → #6, BUG-M03 → #4 (підтверджено), BUG-M01 → #7, BUG-M02 → #8;
    внести перелік методів `PriceCalculatorTotalTest` (Чаплюк Д.) і `BookingContactsTest`
    (Гетьман Є.) — прохання з матриці.
@@ -131,7 +131,7 @@ BUG-M03 ×9, BUG-M05 ×3 (2F+1E), BUG-M06 ×2, BUG-M01 ×1, BUG-M02 ×2, BUG-M04
 ## 6. Відомі обмеження
 
 - Потік бронювання `/reservation/{id}` (кейси TC-005, TC-007…TC-019, TC-035…TC-037, TC-040)
-  недоступний: `GET /api/room/{id}` → HTTP 500 — дефект demo (той самий, що BUG-001 спринта 3);
+  недоступний: `GET /api/room/{id}` → HTTP 500 — дефект demo (той самий, що BUG-001 спринта 3; Issue #10);
   сторінка номера не рендериться, локатори підготовлено.
 - Валидаційні помилки контактної форми demo v2.2 не рендеряться (drift) — TC-021/TC-022
   перевіряють спек-поведінку «повідомлення не надіслано» (див. `ui-scenarios.md`, розд. 3.2).
