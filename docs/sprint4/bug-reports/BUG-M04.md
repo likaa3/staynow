@@ -1,12 +1,12 @@
 # BUG-M04 — округлення DOWN замість HALF_UP у `PriceCalculator.nightPrice`
 
-> Звіт перенесено в GitHub Issues. **GitHub Issue: #4** · Мітки: **`bug`, `module`, `severity:major`, `priority:high`, `sprint:4`**
+> Звіт перенесено в GitHub Issues. **GitHub Issue: #6** · Мітки: **`bug`, `module`, `severity:major`, `priority:high`, `sprint:4`**
 > Шаблон звіту — §4.9 методичних вказівок Спринту 4 (поля за шаблоном спринта 3).
 > Виконавець: Чаплюк Д. (ІТ / SDET).
 
 ## ID
 
-`BUG-M04` (GitHub Issue #4)
+`BUG-M04` (GitHub Issue #6)
 
 ## Title
 
@@ -30,7 +30,7 @@
 
 Дефект зафіксовано червоним тестом **`PriceCalculatorTotalTest#nightPriceRoundsHalfUp`**
 (`src/test/java/ua/kpi/tzyapz/staynow/PriceCalculatorTotalTest.java`, над методом — коментар
-`// BUG-M04, Issue #4`). Тест залишено червоним згідно з правилом спринту: червоні тести дефектів
+`// BUG-M04, Issue #6`). Тест залишено червоним згідно з правилом спринту: червоні тести дефектів
 не вимикати й не «підганяти» (без `@Disabled`, без зміни очікуваного значення під `DOWN`).
 
 ## Steps to reproduce
@@ -71,11 +71,11 @@
 - Інфраструктура: JDK 17 (Temurin 17.0.21.1), Apache Maven 3.9.11, JUnit Jupiter 5.10.2,
   Windows 11
 - Тест-артефакт: `src/test/java/ua/kpi/tzyapz/staynow/PriceCalculatorTotalTest.java`
-  (метод `nightPriceRoundsHalfUp`, коментар `// BUG-M04, Issue #4`)
+  (метод `nightPriceRoundsHalfUp`, коментар `// BUG-M04, Issue #6`)
 
 ## Attachments
 
 - `docs/sprint4/bug-reports/attachments/BUG-M04-surefire.txt` — копія звіту Surefire
   (`target/surefire-reports/ua.kpi.tzyapz.staynow.PriceCalculatorTotalTest.txt`) із трасуванням
   падіння `nightPriceRoundsHalfUp` (`expected: <10.01> but was: <10.00>`)
-- скріншот падіння тесту (`BUG-M04-failure.png`) — вкладено в GitHub Issue #4
+- скріншот падіння тесту (`BUG-M04-failure.png`) — вкладено в GitHub Issue #6

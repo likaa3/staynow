@@ -54,7 +54,7 @@ mvn test -DexcludedGroups=none
 
 | Клас.метод | Тип | Дефект | Issue |
 |---|---|---|---|
-| `PriceCalculatorTotalTest.nightPriceRoundsHalfUp` | Failure | BUG-M04 | #4 |
+| `PriceCalculatorTotalTest.nightPriceRoundsHalfUp` | Failure | BUG-M04 | #6 |
 | `AvailabilityTest.checkInOnPreviousGuestCheckOutDayIsAllowed` | Failure | BUG-M05 | #2 |
 | `AvailabilityTest.checkOutOnNextGuestCheckInDayIsAllowed` | Failure | BUG-M05 | #2 |
 | `AvailabilityTest.cancellationFeeAtBoundaries[7,0.00]` | Failure | BUG-M06 | #3 |

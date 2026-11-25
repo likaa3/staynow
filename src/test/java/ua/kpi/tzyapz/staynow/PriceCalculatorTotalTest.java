@@ -35,7 +35,7 @@ class PriceCalculatorTotalTest {
         calc = new PriceCalculator();
     }
 
-    // BUG-M04, Issue #4 (мітки: bug, module, severity:major, priority:high, sprint:4; звіт: docs/sprint4/bug-reports/BUG-M04.md)
+    // BUG-M04, Issue #6 (мітки: bug, module, severity:major, priority:high, sprint:4; звіт: docs/sprint4/bug-reports/BUG-M04.md)
     @Test
     @DisplayName("BL-50: nightPrice — граничне округлення HALF_UP: 8.70 × 1.15 = 10.005 → 10.01 (зафіксував BUG-M04)")
     void nightPriceRoundsHalfUp() {
