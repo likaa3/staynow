@@ -2,7 +2,7 @@
 
 Продукт: «СтейНау» (П4) · модуль staynow v1 (1.0.0) · Спринт 4 «Автоматизація: JUnit 5 і Selenium WebDriver»
 Автор розділу: Бєлянцева А. (ТА, задача 10.3) · Рецензент: Вігура С. · Стан на 25.11.2026
-Репозиторій: `qa-staynow` (посилання — у README команди) · Трекер: GitHub Issues, мітка `module`
+Репозиторій: https://github.com/likaa3/staynow · Трекер: GitHub Issues репозиторію, мітка `module` (BUG-M01…M06 — #7, #8, #4, #6, #2, #3)
 
 ## 1. Норматив (план / факт)
 
@@ -40,10 +40,10 @@
 |---|---|---|
 | Проміжний, 25.11.2026 (без SeasonTest і BookingValidatorTest) | `mvn clean test` | `Tests run: 67, Failures: 5, Errors: 1, Skipped: 0` — `BUILD FAILURE` (очікувано) |
 | `PriceCalculatorSeasonTest` окремо, 25.11.2026 | `mvn test -Dtest=PriceCalculatorSeasonTest` | `Tests run: 41, Failures: 9, Errors: 0` (BUG-M03) |
-| Повний набір після заливки | `mvn clean test` | очікується `Tests run: 130, Failures: 17, Errors: 1`; фактичне — ___ (`docs/sprint4/surefire-summary.md`) |
-| UI-набір | `mvn test -DexcludedGroups=none` | ___ (`docs/sprint4/ui-stability-runs.md`) |
+| Фінальний прогін аудитора, 25.11.2026, 23:28–23:32, чиста папка | `mvn clean test` | `Tests run: 130, Failures: 17, Errors: 1` — `BUILD FAILURE` (очікувано; `docs/sprint4/surefire-summary.md`) |
+| Юніт- + UI-набір, два прогони поспіль, 25.11.2026 | `mvn test -DexcludedGroups=none` | обидва рази `Tests run: 141, Failures: 17, Errors: 1`; список падінь однаковий; 11 UI-тестів зелені, flaky немає (`docs/sprint4/ui-stability-runs.md`) |
 
-`BUILD FAILURE` очікуваний: усі падіння — зареєстровані дефекти модуля v1, неочікуваних немає.
+`BUILD FAILURE` очікуваний: усі 18 падінь (17 Failures + 1 Error) — зареєстровані дефекти модуля v1 BUG-M01…M06, неочікуваних немає. Розклад: BUG-M01 — 1, BUG-M02 — 2, BUG-M03 — 9, BUG-M04 — 1, BUG-M05 — 2 Failures + 1 Error, BUG-M06 — 2. Error — `AvailabilityTest.bookBackToBackRegistersSecondStay` (`IllegalStateException`, побічний ефект BUG-M05).
 
 ## 5. Дефекти модуля v1
 
