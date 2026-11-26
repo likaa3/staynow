@@ -86,19 +86,8 @@ class PriceCalculatorTotalTest {
         assertEquals(new BigDecimal("115.00"), price); // саме «115.00», а не «115» — шкала 2 знаки
     }
 
-    @Test
-    @DisplayName("BL-50: підсумок = сума вартостей ночей; перетин межі сезону 31.08 → 01.09: 130.00 + 100.00 = 230.00")
-    void totalSumsNightPricesAcrossSeasonBoundary() {
-        // arrange
-        BigDecimal base = new BigDecimal("100");
-
-        // act
-        BigDecimal total = calc.total(base, LocalDate.of(2026, 8, 31), LocalDate.of(2026, 9, 2));
-
-        // assert
-        assertEquals(new BigDecimal("230.00"), total);
-    }
-
+    // Примітка (задача 8.2): дублікат totalSumsNightPricesAcrossSeasonBoundary видалено —
+    // перетин межі сезонів покриває PriceCalculatorSeasonTest#totalAcrossSeasonBoundaryAugustToSeptember (Вігура С.)
     @ParameterizedTest(name = "BL-50: {0} ночей ({1} … {2}) → {3} грн")
     @CsvSource({
             "6, 2026-09-15, 2026-09-21, 630.00",  // межа знизу: 6 ночей — знижки немає

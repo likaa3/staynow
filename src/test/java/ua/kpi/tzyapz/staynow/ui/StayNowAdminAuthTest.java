@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -81,31 +80,28 @@ class StayNowAdminAuthTest extends UiTestBase {
         );
     }
 
-    /** Кейс TC-025 (F-85, S-10): вихід адміністратора завершує сесію. */
+    /** Кейс TC-025 (F-85, S-10): вихід адміністратора — після виходу очікується сторінка входу. */
     @Test
-    @DisplayName("TC-025: Logout (F-85, S-10) завершує сесію — повторний /admin вимагає вхід")
-    void logoutTerminatesSession() {
+    @DisplayName("TC-025: Logout (F-85, крок 6) — після виходу очікується сторінка входу; "
+            + "demo повертає на головну (дефект demo, червоний)")
+    void logoutReturnsToLoginPage() {
         // arrange: вхід успішний
         StayNowAdminLoginPage page = new StayNowAdminLoginPage(driver, wait).open();
         page.login("admin", "password").waitDashboard();
 
-        // act (поведінка demo v2.2: після Logout користувач повертається на головну сторінку)
+        // act
         page.logoutAndWaitForFrontPage();
 
-        // assert (ОР TC-025: «після виходу — сторінка входу адміністратора». Demo повертає
-        // на головну — це дефект demo (BUG-001 спринта 3; реєструється в трекері з міткою demo),
-        // тому частина ОР «повернення на сторінку входу» не перевіряється; натомість перевіряється
-        // частина S-10: адмінпанель без входу недоступна — повторний /admin показує форму входу)
+        // assert (ОР TC-025 крок 6 і F-85: «після виходу — сторінка входу адміністратора».
+        // Demo v2.2 повертає на головну — це окремий дефект demo (реєструється Issue з міткою
+        // `demo`; BUG-001 спринта 3 не стосується), тому очікування з кейсу ВІДНОВЛЕНО
+        // і тест лишається червоним до виправлення demo)
         assertAll(
-                () -> assertFalse(driver.getCurrentUrl().contains("/admin"),
-                        "після виходу користувач не в адмінпанелі: " + driver.getCurrentUrl()),
-                () -> assertTrue(driver.getCurrentUrl().equals(StayNowHomePage.BASE_URL)
-                                || driver.getCurrentUrl().equals(StayNowHomePage.BASE_URL + "/"),
-                        "повернено на головну сторінку demo: " + driver.getCurrentUrl())
+                () -> assertTrue(driver.getCurrentUrl().contains("/admin"),
+                        "F-85/TC-025: після Logout очікується сторінка входу /admin, фактично: "
+                                + driver.getCurrentUrl()),
+                () -> assertTrue(page.loginFormShown(),
+                        "форма входу адміністратора показана після виходу")
         );
-
-        // сесія завершена: повторне відкриття /admin показує форму входу, а не дашборд
-        page.open();
-        assertTrue(page.loginFormShown(), "після виходу /admin вимагає вхід — форма Login показана");
     }
 }

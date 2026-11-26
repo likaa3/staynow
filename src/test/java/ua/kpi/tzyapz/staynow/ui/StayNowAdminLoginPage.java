@@ -80,7 +80,8 @@ public class StayNowAdminLoginPage {
     }
 
     public boolean loginFormShown() {
-        return driver.findElement(USERNAME).isDisplayed();
+        return !driver.findElements(USERNAME).isEmpty()
+                && driver.findElement(USERNAME).isDisplayed();
     }
 
     public String frontPageLinkText() {
