@@ -93,8 +93,8 @@ class StayNowAdminAuthTest extends UiTestBase {
         page.logoutAndWaitForFrontPage();
 
         // assert (ОР TC-025 крок 6 і F-85: «після виходу — сторінка входу адміністратора».
-        // Demo v2.2 повертає на головну — це окремий дефект demo (реєструється Issue з міткою
-        // `demo`; BUG-001 спринта 3 не стосується), тому очікування з кейсу ВІДНОВЛЕНО
+        // Demo v2.2 повертає на головну — це окремий дефект demo — Issue #12 (мітка `demo`;
+        // BUG-001 спринта 3 не стосується), тому очікування з кейсу ВІДНОВЛЕНО
         // і тест лишається червоним до виправлення demo)
         assertAll(
                 () -> assertTrue(driver.getCurrentUrl().contains("/admin"),

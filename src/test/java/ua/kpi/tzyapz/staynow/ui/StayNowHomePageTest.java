@@ -135,7 +135,7 @@ class StayNowHomePageTest extends UiTestBase {
     /** Кейс TC-021 (F-70): тема з 4 символів (нижня межа 5 мінус 1) відхиляється. */
     @Test
     @DisplayName("TC-021: тема із 4 символів — повідомлення не надіслано, форма лишається "
-            + "(перелік помилок над «Submit» demo не показує — не перевіряється, дефект demo)")
+            + "(перелік помилок над «Submit» demo не показує — не перевіряється, дефект demo — Issue #11)")
     void shortSubjectIsRejected() {
         // arrange
         StayNowHomePage page = new StayNowHomePage(driver, wait).open();
@@ -148,7 +148,7 @@ class StayNowHomePageTest extends UiTestBase {
 
         // assert (ОР TC-021: повідомлення не надіслано — подяки немає, форма лишається.
         // Зауваження ТА п. 3.2: частину ОР «над Submit перелік помилок про поле Subject»
-        // demo не рендерить — не перевіряється, дефект demo; реєструється в трекері
+        // demo не рендерить — не перевіряється, дефект demo — Issue #11; реєструється в трекері
         // з міткою demo)
         assertAll(
                 () -> assertFalse(thanksShown, "подяки бути не має — повідомлення не надіслано"),
@@ -161,7 +161,7 @@ class StayNowHomePageTest extends UiTestBase {
     /** Кейс TC-022 (F-70): повідомлення з 19 символів (нижня межа 20 мінус 1) відхиляється. */
     @Test
     @DisplayName("TC-022: повідомлення із 19 символів — повідомлення не надіслано, форма лишається "
-            + "(перелік помилок над «Submit» demo не показує — не перевіряється, дефект demo)")
+            + "(перелік помилок над «Submit» demo не показує — не перевіряється, дефект demo — Issue #11)")
     void shortMessageIsRejected() {
         // arrange: рівно 19 символів (граничне a−1 для діапазону 20–2000)
         String nineteenChars = "1234567890123456789";
@@ -176,7 +176,7 @@ class StayNowHomePageTest extends UiTestBase {
 
         // assert (ОР TC-022: повідомлення не надіслано — подяки немає, форма лишається.
         // Зауваження ТА п. 3.2: частину ОР «над Submit перелік помилок про поле Message»
-        // demo не рендерить — не перевіряється, дефект demo)
+        // demo не рендерить — не перевіряється, дефект demo — Issue #11)
         assertAll(
                 () -> assertFalse(thanksShown, "подяки бути не має — повідомлення не надіслано"),
                 () -> assertTrue(page.contactFormStillShown(), "форма лишається на сторінці")
