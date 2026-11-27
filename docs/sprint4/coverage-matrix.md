@@ -23,11 +23,25 @@
 | BL-40 | Високий сезон ×1,30; низький ×0,80; інший ×1,00 | 31.05/01.06, 31.08/01.09, 19/20.12, 10/11.01, 31.01/01.02, 28.02, 29.02.2028, 31.03/01.04, 31.10/01.11, 30.11/01.12 | `PriceCalculatorSeasonTest#seasonFactorAtBoundaries` | 22 (0) | — | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
 | BL-30 + BL-40 | Сезон і вихідна надбавка перемножуються | пт/сб/нд у високому та низькому сезоні | `PriceCalculatorSeasonTest#seasonAndWeekendCombine` | 6 (2) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
 | BL-40 + BL-50 | Підсумок через межу сезону | 31.08 + 01.09 (будні); 31.05 (нд) + 01.06 | `PriceCalculatorSeasonTest#totalAcrossSeasonBoundaryAugustToSeptember`, `#totalAcrossSeasonBoundaryMayToJune` | 2 (1) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
-| BL-50 | Вартість ночі, округлення `HALF_UP` до 2 знаків | 8.70 × 1,15 = 10.005 → 10.01 | `PriceCalculatorTotalTest#nightPriceRoundsHalfUp` | 1 (1) | BUG-M04 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
-| BL-50 | Підсумок = сума ночей; знижка 10 % від 7 ночей, `HALF_UP` | 6 / 7 ночей | `PriceCalculatorTotalTest` — ще 10 методів (разом із `nightPriceRoundsHalfUp` 11 методів, 20 виконань) | 19 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Вартість ночі, округлення `HALF_UP` до 2 знаків | 8.70 × 1,15 = 10.005 → 10.01 (сб, звичайний сезон) | `PriceCalculatorTotalTest#nightPriceRoundsHalfUp` | 1 (1) | BUG-M04 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Вартість ночі = тариф × сезонний коефіцієнт, шкала 2 знаки | будень ×1,00 / ×1,30 / ×0,80; тариф 0.01 і 999999.99 | `PriceCalculatorTotalTest#nightPriceAppliesSeasonFactorWithTwoDecimals` | 5 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Вихідна ніч × 1,15, шкала 2 знаки | сб: 100 → 115.00 | `PriceCalculatorTotalTest#nightPriceWeekendSurchargeHasScaleTwo` | 1 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Знижка 10 % від 7 ночей | 6 ночей → 630.00 (без знижки) · 7 ночей → 657.00 | `PriceCalculatorTotalTest#totalAppliesLongStayDiscountFromSevenNights` | 2 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Знижка округлюється `HALF_UP` до 2 знаків | 219.105 → 219.11; 422.775 → 422.78 | `PriceCalculatorTotalTest#totalDiscountRoundsHalfUp` | 2 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Підсумок = сума ночей, шкала 2 знаки | 2 будні ночі → 200.00, `scale() == 2` | `PriceCalculatorTotalTest#totalAlwaysHasScaleTwo` | 1 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Заборонений вхід BL-50 (контракт `@throws IllegalArgumentException` у Javadoc `PriceCalculator`; у тексті BL-50 винятків немає): тариф ≤ 0 у `nightPrice` | −1, 0, 0.00 → `IllegalArgumentException` | `PriceCalculatorTotalTest#nightPriceRejectsNonPositiveBase` | 3 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Заборонений вхід BL-50 (контракт `@throws IllegalArgumentException` у Javadoc `PriceCalculator`; у тексті BL-50 винятків немає): тариф `null` у `nightPrice` | `null` → `IllegalArgumentException` | `PriceCalculatorTotalTest#nightPriceRejectsNullBase` | 1 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Заборонений вхід BL-50 (контракт `@throws IllegalArgumentException` у Javadoc `PriceCalculator`; у тексті BL-50 винятків немає): тариф ≤ 0 у `total` | −1, 0 → `IllegalArgumentException` | `PriceCalculatorTotalTest#totalRejectsNonPositiveBase` | 2 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Заборонений вхід BL-50 (контракт `@throws IllegalArgumentException` у Javadoc `PriceCalculator`; у тексті BL-50 винятків немає): виїзд не пізніший за заїзд у `total` | виїзд = заїзд (0 ночей); виїзд раніше заїзду (`assertAll`) | `PriceCalculatorTotalTest#totalRejectsCheckOutNotAfterCheckIn` | 1 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
 | BL-60 | Плата за скасування: ≥7 днів — 0; 3..6 — 50 %; <3 — 100 % | 30, 8, **7** · 6, 3 · 2, 0 (вартість 1000.00) | `AvailabilityTest#cancellationFeeAtBoundaries` | 7 (1) | BUG-M06 | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
 | BL-60 | Повернення = вартість − плата | межі 7 / 3 днів | `AvailabilityTest#refundAtBoundaries`, `#freeCancellationRefundsEverything` | (1) | BUG-M06 | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
 | BL-70 | Номер вільний, якщо інтервали не перетинаються; виїзд у день заїзду іншого гостя дозволено | 15–17.09 і 17–19.09 («спина до спини») з обох боків; перетин 16–18.09 | `AvailabilityTest#checkInOnPreviousGuestCheckOutDayIsAllowed`, `#checkOutOnNextGuestCheckInDayIsAllowed`, `#overlappingBookingIsRejected`, `#bookBackToBackRegistersSecondStay` | (2 Failure + 1 Error) | BUG-M05 | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | Перетин інтервалів — номер зайнятий | часткове перекриття зліва 13–16.09 при існуючому 15–17.09 | `AvailabilityTest#partialOverlapFromLeftIsNotAvailable` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | Перетин інтервалів — номер зайнятий | ідентичний інтервал 15–17.09 | `AvailabilityTest#identicalIntervalIsNotAvailable` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | Перетин інтервалів — номер зайнятий | новий інтервал усередині існуючого (15–16.09 у 15–17.09) | `AvailabilityTest#intervalInsideExistingStayIsNotAvailable` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | Перетин інтервалів — номер зайнятий | новий інтервал охоплює існуючий | `AvailabilityTest#intervalCoveringExistingStayIsNotAvailable` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | Зайнятість рахується для конкретного номера | ті самі дати, інший номер — вільний | `AvailabilityTest#otherRoomIsAvailable` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | `book` реєструє проживання | бронювання вільного номера з'являється в `stays()` | `AvailabilityTest#bookRegistersStay` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
 | — (контракт методу) | Від'ємна вартість, виїзд не пізніший за заїзд → `IllegalArgumentException` | — | `AvailabilityTest#negativeTotalThrows`, `#invalidIntervalThrows` | (0) | — | Шкарупа М. | Вігура С. | позначити «за Javadoc, не BL» (зауваження 1 review 8.4) |
 
 BL-10 не визначає винятків: заборонений вхід повертає коди `BookingError`, тож `BookingValidatorTest` перевіряє коди, а не `assertThrows`.
@@ -69,8 +83,8 @@ BL-10 не визначає винятків: заборонений вхід п
 
 | Норматив (5 осіб) | План | Факт | Примітка |
 |---|---|---|---|
-| Юніт-тестів (параметризований метод = 1 тест) | ≥ 20 | 44: AvailabilityTest 15, PriceCalculatorTotalTest 11, BookingValidatorTest 7, PriceCalculatorSeasonTest 6, BookingContactsTest 5 | ✅ |
-| Юніт-тестів на особу | ≥ 3 | Шкарупа 15, Чаплюк 11, Бєлянцева 7, Вігура 6, Гетьман 5 | ✅; перевіряється за комітами |
+| Юніт-тестів (параметризований метод = 1 тест) | ≥ 20 | 43: AvailabilityTest 15, PriceCalculatorTotalTest 10, BookingValidatorTest 7, PriceCalculatorSeasonTest 6, BookingContactsTest 5 | ✅ |
+| Юніт-тестів на особу | ≥ 3 | Шкарупа 15, Чаплюк 10, Бєлянцева 7, Вігура 6, Гетьман 5 | ✅; перевіряється за комітами |
 | UI-сценаріїв WebDriver | ≥ 8 | 11 | TC-001…004, TC-020…025, TC-069 |
 | Дефектів модуля (звіт + тест) | ≥ 5 | 6 тестами; Issues: 6 з 6 (M01 #7, M02 #8, M03 #4, M04 #6, M05 #2, M06 #3) | ✅ |
 | Сценаріїв Selenium IDE | 1–2 | 2 | `selenium-ide/staynow.side` |
@@ -82,4 +96,4 @@ BL-10 не визначає винятків: заборонений вхід п
 | Роль | Хто | Дата | Позначка |
 |---|---|---|---|
 | Автор (ТА) | Бєлянцева А. | 26.11.2026 | матриця звірена з фінальним прогоном аудитора і позначками 8.5 |
-| Рецензент матриці (задача 3.1) | Вігура С. | 26.11.2026 | схвалено (КТ, задача 3.2): 6/6 дефектів зафіксовано, цифри збігаються з surefire-summary.md |
+| Рецензент матриці (задача 3.1) | Вігура С. | | |
