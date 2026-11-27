@@ -40,10 +40,12 @@
 |---|---|---|
 | Проміжний, 25.11.2026 (без SeasonTest і BookingValidatorTest) | `mvn clean test` | `Tests run: 67, Failures: 5, Errors: 1, Skipped: 0` — `BUILD FAILURE` (очікувано) |
 | `PriceCalculatorSeasonTest` окремо, 25.11.2026 | `mvn test -Dtest=PriceCalculatorSeasonTest` | `Tests run: 41, Failures: 9, Errors: 0` (BUG-M03) |
-| Фінальний прогін аудитора, 25.11.2026, 23:28–23:32, чиста папка | `mvn clean test` | `Tests run: 130, Failures: 17, Errors: 1` — `BUILD FAILURE` (очікувано; `docs/sprint4/surefire-summary.md`) |
-| Юніт- + UI-набір, два прогони поспіль, 25.11.2026 | `mvn test -DexcludedGroups=none` | обидва рази `Tests run: 141, Failures: 17, Errors: 1`; список падінь однаковий; 11 UI-тестів зелені, flaky немає (`docs/sprint4/ui-stability-runs.md`) |
+| Фінальний прогін у чистій папці, 26.11.2026, 22:57 (клон `likaa3/staynow`, HEAD `6c5f7ac`; Чаплюк Д. за запитом аудитора) | `mvn clean test` | `Tests run: 129, Failures: 17, Errors: 1` — `BUILD FAILURE` (очікувано) |
+| Юніт- + UI-набір, два прогони поспіль, 26.11.2026, 22:58 і 22:59 | `mvn test -DexcludedGroups=none` | обидва рази `Tests run: 140, Failures: 18, Errors: 1`; список падінь ідентичний, flaky немає; 10 UI-тестів зелені; 18-й Failure — TC-025 (`logoutReturnsToLoginPage`), червоний навмисно — дефект demo Issue #12 |
 
-`BUILD FAILURE` очікуваний: усі 18 падінь (17 Failures + 1 Error) — зареєстровані дефекти модуля v1 BUG-M01…M06, неочікуваних немає. Розклад: BUG-M01 — 1, BUG-M02 — 2, BUG-M03 — 9, BUG-M04 — 1, BUG-M05 — 2 Failures + 1 Error, BUG-M06 — 2. Error — `AvailabilityTest.bookBackToBackRegistersSecondStay` (`IllegalStateException`, побічний ефект BUG-M05).
+Логи трьох прогонів і звіти Surefire — архів `audit-final2-results.zip` (Чаплюк Д.); підсумок — `docs/sprint4/surefire-summary.md`, `docs/sprint4/ui-stability-runs.md`.
+
+`BUILD FAILURE` очікуваний: усі 18 падінь (17 Failures + 1 Error) — зареєстровані дефекти модуля v1 BUG-M01…M06, неочікуваних немає (юніт-набір). Розклад: BUG-M01 — 1, BUG-M02 — 2, BUG-M03 — 9, BUG-M04 — 1, BUG-M05 — 2 Failures + 1 Error, BUG-M06 — 2. Error — `AvailabilityTest.bookBackToBackRegistersSecondStay` (`IllegalStateException`, побічний ефект BUG-M05).
 
 ## 5. Дефекти модуля v1
 
