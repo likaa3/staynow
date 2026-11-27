@@ -8,8 +8,8 @@
 
 | Норматив (5 осіб) | План | Факт |
 |---|---|---|
-| Юніт-тестів JUnit 5 (параметризований метод = 1 тест) | ≥ 20 | 44 (AvailabilityTest 15, PriceCalculatorTotalTest 11, BookingValidatorTest 7, PriceCalculatorSeasonTest 6, BookingContactsTest 5) |
-| Юніт-тестів на особу (за комітами) | ≥ 3 | Шкарупа 15, Чаплюк 11, Бєлянцева 7, Вігура 6, Гетьман 5 |
+| Юніт-тестів JUnit 5 (параметризований метод = 1 тест) | ≥ 20 | 43 (AvailabilityTest 15, PriceCalculatorTotalTest 10, BookingValidatorTest 7, PriceCalculatorSeasonTest 6, BookingContactsTest 5) |
+| Юніт-тестів на особу (за комітами) | ≥ 3 | Шкарупа 15, Чаплюк 10, Бєлянцева 7, Вігура 6, Гетьман 5 |
 | UI-сценаріїв WebDriver | ≥ 8 | 11 |
 | Дефектів модуля (звіт + тест) | ≥ 5 | 6 із 6 зафіксовано тестами; звітів 6; Issues 6 з 6 |
 | Сценаріїв Selenium IDE | 1–2 | 2 |
@@ -24,7 +24,7 @@
 | BL-20 | email, телефон +380 і 9 цифр | `BookingContactsTest` | Гетьман Є. | — |
 | BL-30 | вихідні ночі пт/сб, надбавка 15 % | `PriceCalculatorSeasonTest` | Вігура С. | BUG-M03 |
 | BL-40 | сезонні коефіцієнти, межі сезонів | `PriceCalculatorSeasonTest` | Вігура С. | — |
-| BL-50 | вартість ночі, `HALF_UP`, підсумок, знижка від 7 ночей | `PriceCalculatorTotalTest` | Чаплюк Д. | BUG-M04 |
+| BL-50 | вартість ночі, `HALF_UP`, підсумок, знижка від 7 ночей; заборонений вхід (тариф ≤ 0, null, виїзд не пізніший за заїзд) | `PriceCalculatorTotalTest` | Чаплюк Д. | BUG-M04 |
 | BL-60 | плата за скасування (межі 7/3 дні), повернення | `AvailabilityTest` | Шкарупа М. | BUG-M06 |
 | BL-70 | зайнятість, «спина до спини» дозволено | `AvailabilityTest` | Шкарупа М. | BUG-M05 |
 
@@ -53,8 +53,8 @@
 | BUG-M02 | BL-10: перевіряється дата виїзду замість дати заїзду | `BookingValidatorTest#checkInBeforeTodayIsRejected` | Major | #8 |
 | BUG-M03 | BL-30: вихідні — сб/нд замість пт/сб | `PriceCalculatorSeasonTest` (4 методи) | Major | #4 |
 | BUG-M04 | BL-50: округлення `DOWN` замість `HALF_UP` | `PriceCalculatorTotalTest#nightPriceRoundsHalfUp` | Major | #6 |
-| BUG-M05 | BL-70: виїзд/заїзд в один день вважається перетином | `AvailabilityTest` (3 виконання) | за звітом | #2 |
-| BUG-M06 | BL-60: на 7-й день береться 50 % | `AvailabilityTest#cancellationFeeAtBoundaries` | за звітом | #3 |
+| BUG-M05 | BL-70: виїзд/заїзд в один день вважається перетином | `AvailabilityTest` (3 виконання) | Major | #2 |
+| BUG-M06 | BL-60: на 7-й день береться 50 % | `AvailabilityTest#cancellationFeeAtBoundaries` | Major | #3 |
 
 ## 6. Висновок про стан модуля v1
 
