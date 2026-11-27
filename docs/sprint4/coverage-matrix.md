@@ -61,7 +61,7 @@ BL-10 не визначає винятків: заборонений вхід п
 | `StayNowHomePageTest#shortMessageIsRejected` | TC-022 | F-70 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
 | `StayNowAdminAuthTest#adminLoginOpensDashboard` | TC-023 | F-80 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
 | `StayNowAdminAuthTest#wrongPasswordShowsErrorAndKeepsLoginForm` | TC-024 | F-80, GUI-70 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
-| `StayNowAdminAuthTest#logoutTerminatesSession` | TC-025 | F-85, S-10 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowAdminAuthTest#logoutReturnsToLoginPage` | TC-025 | F-85, S-10 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5); на demo червоний навмисно — Issue #12 (дефект demo) |
 | `StayNowAdminAuthTest#adminLoginPageHeaderShowsFrontPageAndLogout` | TC-069 | GUI-70 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
 | Selenium IDE `staynow.side`: «Головна сторінка» | TC-001, TC-003 | F-10, F-20 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
 | Selenium IDE `staynow.side`: «Вхід адміністратора» | TC-023, TC-024 | F-80 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
@@ -89,7 +89,7 @@ BL-10 не визначає винятків: заборонений вхід п
 | Дефектів модуля (звіт + тест) | ≥ 5 | 6 тестами; Issues: 6 з 6 (M01 #7, M02 #8, M03 #4, M04 #6, M05 #2, M06 #3) | ✅ |
 | Сценаріїв Selenium IDE | 1–2 | 2 | `selenium-ide/staynow.side` |
 
-**Підсумок повного прогону** (фінальний прогін аудитора 25.11.2026, 23:28–23:32, чиста папка): `mvn clean test` → **`Tests run: 130, Failures: 17, Errors: 1`**; `mvn test -DexcludedGroups=none` двічі → `Tests run: 141, Failures: 17, Errors: 1`, список падінь однаковий, 11 UI-тестів зелені. Збігається з розрахунком: проміжний прогін (67 / 5 / 1) + `PriceCalculatorSeasonTest` (41 / 9) + `BookingValidatorTest` (22 / 3); 18 падінь = 1 + 2 + 9 + 1 + 3 + 2 за BUG-M01…M06. Протокол — `docs/sprint4/surefire-summary.md`.
+**Підсумок повного прогону** — незалежний прогін у чистій папці 26.11.2026 (клон `likaa3/staynow`, HEAD `6c5f7ac`, після видалення дубліката `totalSumsNightPricesAcrossSeasonBoundary` з `PriceCalculatorTotalTest`): `mvn clean test` → **`Tests run: 129, Failures: 17, Errors: 1`**; `mvn test -DexcludedGroups=none` двічі → `Tests run: 140, Failures: 18, Errors: 1`, список падінь ідентичний. Юніт-набір: 18 падінь = 1 + 2 + 9 + 1 + 3 + 2 за BUG-M01…M06 (17 Failures + 1 Error). UI-набір: 10 UI-тестів зелені; 18-й Failure — `StayNowAdminAuthTest#logoutReturnsToLoginPage` (TC-025), червоний навмисно — дефект demo Issue #12. Протокол — `docs/sprint4/surefire-summary.md`.
 
 ## 5. Позначки рецензента матриці
 
