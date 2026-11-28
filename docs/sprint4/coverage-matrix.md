@@ -21,7 +21,7 @@
 | BL-30 | Вихідні ночі — з пт на сб і з сб на нд | пн…нд тижня 14–20.09.2026 (межі чт/пт і сб/нд) | `PriceCalculatorSeasonTest#weekendNightsAreFridayAndSaturday` | 7 (2) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
 | BL-30 | Надбавка 15 % за вихідну ніч | чт 100.00, пт 115.00, сб 115.00, нд 100.00 | `PriceCalculatorSeasonTest#weekendSurchargeAppliedOnFridayAndSaturdayOnly` | 4 (2) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
 | BL-40 | Високий сезон ×1,30; низький ×0,80; інший ×1,00 | 31.05/01.06, 31.08/01.09, 19/20.12, 10/11.01, 31.01/01.02, 28.02, 29.02.2028, 31.03/01.04, 31.10/01.11, 30.11/01.12 | `PriceCalculatorSeasonTest#seasonFactorAtBoundaries` | 22 (0) | — | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
-| BL-30 + BL-40 | Сезон і вихідна надбавка перемножуються | пт/сб/нд у високому та низькому сезоні | `PriceCalculatorSeasonTest#seasonAndWeekendCombine` | 6 (4) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
+| BL-30 + BL-40 | Сезон і вихідна надбавка перемножуються | пт/сб/нд у високому та низькому сезоні | `PriceCalculatorSeasonTest#seasonAndWeekendCombine` | 6 (2) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
 | BL-40 + BL-50 | Підсумок через межу сезону | 31.08 + 01.09 (будні); 31.05 (нд) + 01.06 | `PriceCalculatorSeasonTest#totalAcrossSeasonBoundaryAugustToSeptember`, `#totalAcrossSeasonBoundaryMayToJune` | 2 (1) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
 | BL-50 | Вартість ночі, округлення `HALF_UP` до 2 знаків | 8.70 × 1,15 = 10.005 → 10.01 (сб, звичайний сезон) | `PriceCalculatorTotalTest#nightPriceRoundsHalfUp` | 1 (1) | BUG-M04 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
 | BL-50 | Вартість ночі = тариф × сезонний коефіцієнт, шкала 2 знаки | будень ×1,00 / ×1,30 / ×0,80; тариф 0.01 і 999999.99 | `PriceCalculatorTotalTest#nightPriceAppliesSeasonFactorWithTwoDecimals` | 5 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
@@ -89,11 +89,11 @@ BL-10 не визначає винятків: заборонений вхід п
 | Дефектів модуля (звіт + тест) | ≥ 5 | 6 тестами; Issues: 6 з 6 (M01 #7, M02 #8, M03 #4, M04 #6, M05 #2, M06 #3) | ✅ |
 | Сценаріїв Selenium IDE | 1–2 | 2 | `selenium-ide/staynow.side` |
 
-**Підсумок повного прогону** — прогін аудитора (Гетьман Є.) у чистій папці 27.11.2026 (клон `likaa3/staynow`, HEAD `6c5f7ac`, після видалення дубліката `totalSumsNightPricesAcrossSeasonBoundary` з `PriceCalculatorTotalTest`): `mvn clean test` → **`Tests run: 129, Failures: 17, Errors: 1`**; `mvn test -DexcludedGroups=none` двічі → `Tests run: 140, Failures: 18, Errors: 1`, список падінь ідентичний. Юніт-набір: 18 падінь = 1 + 2 + 9 + 1 + 3 + 2 за BUG-M01…M06 (17 Failures + 1 Error). UI-набір: 10 UI-тестів зелені; 18-й Failure — `StayNowAdminAuthTest#logoutReturnsToLoginPage` (TC-025), червоний навмисно — дефект demo Issue #12. Протокол — `docs/sprint4/surefire-summary.md`.
+**Підсумок повного прогону** — незалежний прогін у чистій папці 26.11.2026 (клон `likaa3/staynow`, HEAD `6c5f7ac`, після видалення дубліката `totalSumsNightPricesAcrossSeasonBoundary` з `PriceCalculatorTotalTest`): `mvn clean test` → **`Tests run: 129, Failures: 17, Errors: 1`**; `mvn test -DexcludedGroups=none` двічі → `Tests run: 140, Failures: 18, Errors: 1`, список падінь ідентичний. Юніт-набір: 18 падінь = 1 + 2 + 9 + 1 + 3 + 2 за BUG-M01…M06 (17 Failures + 1 Error). UI-набір: 10 UI-тестів зелені; 18-й Failure — `StayNowAdminAuthTest#logoutReturnsToLoginPage` (TC-025), червоний навмисно — дефект demo Issue #12. Протокол — `docs/sprint4/surefire-summary.md`.
 
 ## 5. Позначки рецензента матриці
 
 | Роль | Хто | Дата | Позначка |
 |---|---|---|---|
 | Автор (ТА) | Бєлянцева А. | 26.11.2026 | матриця звірена з фінальним прогоном аудитора і позначками 8.5 |
-| Рецензент матриці (задача 3.1) | Вігура С. (КТ) | 28.11.2026 | схвалено (задача 3.2): 6/6 дефектів модуля зафіксовано тестами; цифри 129/17/1 і 140/18/1 збігаються з `surefire-summary.md` |
+| Рецензент матриці (задача 3.1) | Вігура С. | | |
