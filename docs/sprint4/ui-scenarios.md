@@ -1,82 +1,100 @@
-# UI-сценарії Спринту 4 — автоматизація кейсів спринта 3
+# Матриця покриття — Спринт 4 («СтейНау», модуль staynow v1)
 
-Перелік сценаріїв і звірка з кейсами — Бєлянцева А. (ТА, задача 3.3); тест-методи і локатори — Чаплюк Д. (ІТ / SDET, задачі 7.1–7.3).
-Рецензент переліку — Чаплюк Д. · Звірено з `docs/sprint3/test-cases.xlsx` (72 кейси, статус «схвалено») 25.11.2026.
-Demo: https://automationintesting.online (restful-booker-platform v2.2).
+Автор: Бєлянцева А. (ТА, задача 3.1) · Рецензент матриці: Вігура С. · Фінальні позначки рецензентів тестів — Шкарупа М. (задача 8.5).
+Джерело очікуваних значень — розд. 5 SRS_04 «СтейНау» (BL-10…BL-70), продубльований у `README.md` модуля. Стан на 25.11.2026; цифри прогону — за `surefire-summary.md` (28.11.2026).
 
-## 1. Як обрано сценарії
+Для кожного правила — нормальний випадок, обидва боки кожної межі і заборонений вхід (методичка, §5.1, п. 3).
+Позначка «червоні на v1» — кількість виконань, що падають через закладений дефект; такі тести не вимикаються і не «підганяються» (§4.9).
 
-За методичкою (§5.1, п. 7; §5.2) — сценарії спринта 3 з високим пріоритетом і такі, що повторюються в кожній регресії: головна сторінка, перевірка доступності, вхід, форма з валідацією.
+## 1. Юніт-тести: BL-вимога → правило → тести
 
-Не обрано:
-- кейси, що змінюють спільні дані demo (TC-026, TC-027 — створення/видалення номера; TC-028 — повідомлення), бо UI-тест запускається часто, а етика 5.4 забороняє засмічувати demo;
-- TC-030 (31 хв очікування) — непридатний для регулярного прогону;
-- TC-041, TC-042 (візуальна верстка 1280/375 px) — потребують порівняння зображень;
-- TC-005, TC-007…TC-019, TC-035…TC-037, TC-040 — заблоковані дефектом demo (розд. 4).
+| BL | Правило | Межі / класи значень | Тест-клас#метод | Виконань (червоних на v1) | Дефект | Автор | Рецензент | Позначка рецензента |
+|---|---|---|---|---|---|---|---|---|
+| BL-10 | Допустиме бронювання не має помилок | 2 ночі, 2 гості з 2, заїзд за тиждень | `BookingValidatorTest#validBookingHasNoErrors` | 1 (0) | — | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Виїзд пізніший за заїзд | виїзд = заїзд; на 1 і 10 днів раніше | `BookingValidatorTest#checkOutNotAfterCheckInIsRejected` | 3 (0) | — | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Ночей 1..30 | 1, 2 · 29, **30**, 31 · 45 | `BookingValidatorTest#nightsAreAllowedFromOneToThirty` | 6 (1) | BUG-M01 | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Заїзд не раніше today | today, today+1 | `BookingValidatorTest#checkInTodayOrLaterIsAccepted` | 2 (0) | — | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Заїзд не раніше today | today−1 із виїздом today+2 і today; обидві дати в минулому | `BookingValidatorTest#checkInBeforeTodayIsRejected` | 3 (2) | BUG-M02 | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Гостей 1..місткість | 0, 1, 2, 3 при місткості 2; 4, 5 при місткості 4 | `BookingValidatorTest#guestsAreAllowedFromOneToCapacity` | 6 (0) | — | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-10 | Усі порушення повертаються разом | заїзд у минулому + 0 гостей (`assertAll`) | `BookingValidatorTest#severalViolationsAreAllReported` | 1 (0) | — | Бєлянцева А. | Шкарупа М. | approved (задача 8.5) |
+| BL-20 | Email «локальна_частина@домен.зона»; телефон «+380» і рівно 9 цифр; коди `INVALID_EMAIL`, `INVALID_PHONE` у `validate(…, email, phone)` | телефон 8 / 9 / 10 цифр після +380, без +380, код +381, з літерою; email без @, без локальної частини, без домену, без зони, з двома @, з пробілом, порожній; null | `BookingContactsTest#validEmailIsAccepted`, `#invalidEmailIsRejected`, `#phoneFormatAtBoundaries`, `#nullContactsAreRejected`, `#validateAddsContactErrors` | 18 (0) | — | Гетьман Є. | Шкарупа М. | approved 22.11 |
+| BL-30 | Вихідні ночі — з пт на сб і з сб на нд | пн…нд тижня 14–20.09.2026 (межі чт/пт і сб/нд) | `PriceCalculatorSeasonTest#weekendNightsAreFridayAndSaturday` | 7 (2) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
+| BL-30 | Надбавка 15 % за вихідну ніч | чт 100.00, пт 115.00, сб 115.00, нд 100.00 | `PriceCalculatorSeasonTest#weekendSurchargeAppliedOnFridayAndSaturdayOnly` | 4 (2) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
+| BL-40 | Високий сезон ×1,30; низький ×0,80; інший ×1,00 | 31.05/01.06, 31.08/01.09, 19/20.12, 10/11.01, 31.01/01.02, 28.02, 29.02.2028, 31.03/01.04, 31.10/01.11, 30.11/01.12 | `PriceCalculatorSeasonTest#seasonFactorAtBoundaries` | 22 (0) | — | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
+| BL-30 + BL-40 | Сезон і вихідна надбавка перемножуються | пт/сб/нд у високому та низькому сезоні | `PriceCalculatorSeasonTest#seasonAndWeekendCombine` | 6 (**4**) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
+| BL-40 + BL-50 | Підсумок через межу сезону | 31.08 + 01.09 (будні); 31.05 (нд) + 01.06 | `PriceCalculatorSeasonTest#totalAcrossSeasonBoundaryAugustToSeptember`, `#totalAcrossSeasonBoundaryMayToJune` | 2 (1) | BUG-M03 | Вігура С. | Шкарупа М. | схвалено (задача 8.2) |
+| BL-50 | Вартість ночі, округлення `HALF_UP` до 2 знаків | 8.70 × 1,15 = 10.005 → 10.01 (сб, звичайний сезон) | `PriceCalculatorTotalTest#nightPriceRoundsHalfUp` | 1 (1) | BUG-M04 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Вартість ночі = тариф × сезонний коефіцієнт, шкала 2 знаки | будень ×1,00 / ×1,30 / ×0,80; тариф 0.01 і 999999.99 | `PriceCalculatorTotalTest#nightPriceAppliesSeasonFactorWithTwoDecimals` | 5 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Вихідна ніч × 1,15, шкала 2 знаки | сб: 100 → 115.00 | `PriceCalculatorTotalTest#nightPriceWeekendSurchargeHasScaleTwo` | 1 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Знижка 10 % від 7 ночей | 6 ночей → 630.00 (без знижки) · 7 ночей → 657.00 | `PriceCalculatorTotalTest#totalAppliesLongStayDiscountFromSevenNights` | 2 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Знижка округлюється `HALF_UP` до 2 знаків | 219.105 → 219.11; 422.775 → 422.78 | `PriceCalculatorTotalTest#totalDiscountRoundsHalfUp` | 2 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Підсумок = сума ночей, шкала 2 знаки | 2 будні ночі → 200.00, `scale() == 2` | `PriceCalculatorTotalTest#totalAlwaysHasScaleTwo` | 1 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Заборонений вхід BL-50 (контракт `@throws IllegalArgumentException` у Javadoc `PriceCalculator`; у тексті BL-50 винятків немає): тариф ≤ 0 у `nightPrice` | −1, 0, 0.00 → `IllegalArgumentException` | `PriceCalculatorTotalTest#nightPriceRejectsNonPositiveBase` | 3 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Заборонений вхід BL-50 (контракт `@throws IllegalArgumentException` у Javadoc `PriceCalculator`; у тексті BL-50 винятків немає): тариф `null` у `nightPrice` | `null` → `IllegalArgumentException` | `PriceCalculatorTotalTest#nightPriceRejectsNullBase` | 1 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Заборонений вхід BL-50 (контракт `@throws IllegalArgumentException` у Javadoc `PriceCalculator`; у тексті BL-50 винятків немає): тариф ≤ 0 у `total` | −1, 0 → `IllegalArgumentException` | `PriceCalculatorTotalTest#totalRejectsNonPositiveBase` | 2 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-50 | Заборонений вхід BL-50 (контракт `@throws IllegalArgumentException` у Javadoc `PriceCalculator`; у тексті BL-50 винятків немає): виїзд не пізніший за заїзд у `total` | виїзд = заїзд (0 ночей); виїзд раніше заїзду (`assertAll`) | `PriceCalculatorTotalTest#totalRejectsCheckOutNotAfterCheckIn` | 1 (0) | — | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| BL-60 | Плата за скасування: ≥7 днів — 0; 3..6 — 50 %; <3 — 100 % | 30, 8, **7** · 6, 3 · 2, 0 (вартість 1000.00) | `AvailabilityTest#cancellationFeeAtBoundaries` | 7 (1) | BUG-M06 | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-60 | Повернення = вартість − плата | межі 7 / 3 днів | `AvailabilityTest#refundAtBoundaries`, `#freeCancellationRefundsEverything` | (1) | BUG-M06 | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | Номер вільний, якщо інтервали не перетинаються; виїзд у день заїзду іншого гостя дозволено | 15–17.09 і 17–19.09 («спина до спини») з обох боків; перетин 16–18.09 | `AvailabilityTest#checkInOnPreviousGuestCheckOutDayIsAllowed`, `#checkOutOnNextGuestCheckInDayIsAllowed`, `#overlappingBookingIsRejected`, `#bookBackToBackRegistersSecondStay` | (2 Failure + 1 Error) | BUG-M05 | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | Перетин інтервалів — номер зайнятий | часткове перекриття зліва 13–16.09 при існуючому 15–17.09 | `AvailabilityTest#partialOverlapFromLeftIsNotAvailable` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | Перетин інтервалів — номер зайнятий | ідентичний інтервал 15–17.09 | `AvailabilityTest#identicalIntervalIsNotAvailable` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | Перетин інтервалів — номер зайнятий | новий інтервал усередині існуючого (15–16.09 у 15–17.09) | `AvailabilityTest#intervalInsideExistingStayIsNotAvailable` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | Перетин інтервалів — номер зайнятий | новий інтервал охоплює існуючий | `AvailabilityTest#intervalCoveringExistingStayIsNotAvailable` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | Зайнятість рахується для конкретного номера | ті самі дати, інший номер — вільний | `AvailabilityTest#otherRoomIsAvailable` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| BL-70 | `book` реєструє проживання | бронювання вільного номера з'являється в `stays()` | `AvailabilityTest#bookRegistersStay` | (0) | — | Шкарупа М. | Вігура С. | approved з зауваженнями (задача 8.4) |
+| — (контракт методу) | Від'ємна вартість, виїзд не пізніший за заїзд → `IllegalArgumentException` | — | `AvailabilityTest#negativeTotalThrows`, `#invalidIntervalThrows` | (0) | — | Шкарупа М. | Вігура С. | позначити «за Javadoc, не BL» (зауваження 1 review 8.4) |
 
-Норматив для 5 осіб — ≥ 8 UI-сценаріїв. Обрано **11**.
+BL-10 не визначає винятків: заборонений вхід повертає коди `BookingError`, тож `BookingValidatorTest` перевіряє коди, а не `assertThrows`.
 
-## 2. Автоматизовані сценарії (11) і звірка з кейсами спринта 3
+## 2. UI-тести: тест-метод → тест-кейс спринта 3 → вимога
 
-Стовпці «Вимога», «Пріоритет» і «Очікування» — за `test-cases.xlsx`; «Тест-метод» і «Локатори» — з чернетки Чаплюка Д. Стовпець «Звірка ТА»: ✅ — збігається з кейсом; ⚠ — розбіжність, див. розд. 3.
+Деталі (кроки, локатори, розбіжності) — `docs/sprint4/ui-scenarios.md`.
 
-| TC-ID | Вимога | Пріоритет / тип | Тест-метод (клас) | Ключові кроки | Локатори | Очікування за кейсом | Звірка ТА |
-|---|---|---|---|---|---|---|---|
-| TC-001 | F-10 | High / позитивний | `StayNowHomePageTest#homePageShowsHotelNameBookNowAndMenu` | open `/` → огляд верхньої частини і меню | `.hero h1`, `.hero a.btn`, `.navbar-nav .nav-link` | назва готелю, опис, «Book Now»; меню в порядку Rooms, Booking, Amenities, Location, Contact, Admin | ✅ |
-| TC-002 | F-10 | High / позитивний | `StayNowHomePageTest#menuAnchorsAndAdminOpenLoginPage` | Rooms, Booking, Contact → прокрутка; Admin → `/admin` | `.navbar-nav a[href='/admin']`, `#username`, `.card-header h2` | Rooms/Booking/Contact прокручують до розділів; Admin → адреса `/admin`, заголовок «Login» | ✅ |
-| TC-003 | F-20 | High / позитивний | `StayNowHomePageTest#ourRoomsSectionShowsRoomCards` | прокрутка до «Our Rooms», огляд картки «Single» | `.room-card`, `.room-card .card-title`, `.card-footer .fw-bold`, `a[href*='reservation']` | картки Single, Double, Suite; у картці тип, опис, зручності, «£N per night», «Book now» | ✅ |
-| TC-004 | F-30 | High / позитивний | `StayNowHomePageTest#checkAvailabilityUpdatesRoomLinks` | дати Check In / Check Out → «Check Availability» | `#booking .react-datepicker__input-container input`, `#booking button.btn-primary`, `.room-card a[href*='reservation']` | перелік оновлено; присутні картки «Single», «Double», «Suite» | ⚠ п. 3.1 |
-| TC-020 | F-70, GUI-85 | Medium / позитивний | `StayNowHomePageTest#contactFormWithValidDataShowsThanks` | заповнити форму даними кейсу → «Submit» | `#name`, `#email`, `#phone`, `#subject`, `#description`, `#contact button.btn-primary` | форму замінено подякою з іменем «Test User» і темою «TC020 subject» | ✅ |
-| TC-021 | F-70 | Medium / негативний | `StayNowHomePageTest#shortSubjectIsRejected` | Subject «Test» (4 символи, a−1) → «Submit» | як TC-020 | не надіслано; форма лишається; помилка про поле «Subject» (5–100) — у кейсі «над «Submit»», на demo під кнопкою | ✅ (п. 3.2) |
-| TC-022 | F-70 | Medium / негативний | `StayNowHomePageTest#shortMessageIsRejected` | Message «1234567890123456789» (19 символів, a−1) → «Submit» | як TC-020 | не надіслано; форма лишається; помилка про поле «Message» (20–2000) — у кейсі «над «Submit»», на demo під кнопкою | ✅ (п. 3.2) |
-| TC-023 | F-80 | High / позитивний | `StayNowAdminAuthTest#adminLoginOpensDashboard` | `/admin` → admin / password → «Login» → «Logout» | `#username`, `#password`, `#doLogin` | розділ керування номерами з переліком номерів; після «Logout» — сторінка входу | ⚠ п. 3.3 |
-| TC-024 | F-80, GUI-70 | High / негативний | `StayNowAdminAuthTest#wrongPasswordShowsErrorAndKeepsLoginForm` | admin / `wrongpass1` → «Login» | `.alert.alert-danger` | лишився на сторінці входу, доступу немає; поля позначено як помилкові | ⚠ п. 3.4 |
-| TC-025 | F-85, S-10 | Medium / негативний | `StayNowAdminAuthTest#logoutReturnsToLoginPage` | вхід → «Logout» → відкрити записану адресу розділу номерів | `button.btn-outline-danger` | після «Logout» — сторінка входу; адреса розділу номерів без входу показує «Login» | ✅ ОР за кейсом; на demo червоний навмисно — Issue #12 (п. 3.5) |
-| TC-069 | GUI-70 | High / позитивний | `StayNowAdminAuthTest#adminLoginPageHeaderShowsFrontPageAndLogout` | `/admin` → огляд шапки | `#frontPageLink`, `button.btn-outline-danger` | заголовок «Login»; у шапці «Front Page» і «Logout» | ✅ |
+| Тест-метод | TC-ID | Вимога | Автор | Рецензент | Позначка рецензента |
+|---|---|---|---|---|---|
+| `StayNowHomePageTest#homePageShowsHotelNameBookNowAndMenu` | TC-001 | F-10 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#menuAnchorsAndAdminOpenLoginPage` | TC-002 | F-10 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#ourRoomsSectionShowsRoomCards` | TC-003 | F-20 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#checkAvailabilityUpdatesRoomLinks` | TC-004 | F-30 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#contactFormWithValidDataShowsThanks` | TC-020 | F-70, GUI-85 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#shortSubjectIsRejected` | TC-021 | F-70 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowHomePageTest#shortMessageIsRejected` | TC-022 | F-70 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowAdminAuthTest#adminLoginOpensDashboard` | TC-023 | F-80 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowAdminAuthTest#wrongPasswordShowsErrorAndKeepsLoginForm` | TC-024 | F-80, GUI-70 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| `StayNowAdminAuthTest#logoutReturnsToLoginPage` | TC-025 | F-85, S-10 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5); **червоний у прогоні 140/18/1 — Issue #12** |
+| `StayNowAdminAuthTest#adminLoginPageHeaderShowsFrontPageAndLogout` | TC-069 | GUI-70 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| Selenium IDE `staynow.side`: «Головна сторінка» | TC-001, TC-003 | F-10, F-20 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
+| Selenium IDE `staynow.side`: «Вхід адміністратора» | TC-023, TC-024 | F-80 | Чаплюк Д. | Шкарупа М. | approved (задача 8.5) |
 
-Усі 11 TC-ID існують у `test-cases.xlsx`, мають статус «схвалено» і в Run 1 спринта 3 були виконані. Кожен тест-метод має містити TC-ID у `@DisplayName` (чек-лист 5.3, п. 1).
+## 3. Дефекти модуля → тести
 
-## 3. Розбіжності чернетки з кейсами — що виправити (Чаплюк Д.)
+| ID | Клас.метод модуля | BL | Тест, що фіксує | Червоних виконань на v1 | Звіт | Issue |
+|---|---|---|---|---|---|---|
+| BUG-M01 | `BookingValidator.validate` — рівно 30 ночей відхиляється | BL-10 | `BookingValidatorTest#nightsAreAllowedFromOneToThirty` [30] | 1 | `bug-reports/BUG-M01.md` | #7 |
+| BUG-M02 | `BookingValidator.validate` — перевіряється checkOut замість checkIn | BL-10 | `BookingValidatorTest#checkInBeforeTodayIsRejected` [-1, 2], [-1, 0] | 2 | `bug-reports/BUG-M02.md` | #8 |
+| BUG-M03 | `PriceCalculator.isWeekendNight` — сб/нд замість пт/сб | BL-30 | `PriceCalculatorSeasonTest` (4 методи) | 9 | `bug-reports/BUG-M03.md` | #4 |
+| BUG-M04 | `PriceCalculator.nightPrice` — `DOWN` замість `HALF_UP` | BL-50 | `PriceCalculatorTotalTest#nightPriceRoundsHalfUp` | 1 | `bug-reports/BUG-M04.md` | #6 |
+| BUG-M05 | `Availability.isAvailable` — рівність дат вважається перетином | BL-70 | `AvailabilityTest` (3 виконання: 2 Failure + 1 Error) | 3 | `bug-reports/BUG-M05.md` | #2 |
+| BUG-M06 | `Availability.cancellationFee` — `> 7` замість `>= 7` | BL-60 | `AvailabilityTest#cancellationFeeAtBoundaries` [7], `#refundAtBoundaries` [2] | 2 | `bug-reports/BUG-M06.md` | #3 |
 
-Правило: очікуване береться з кейсу і SRS, а не з поточної поведінки demo (методичка, розд. 12, п. 1; чек-лист 5.3, п. 1, 8). Якщо demo розходиться з кейсом, це дефект demo: його реєструють, а в тесті пишуть, яку частину ОР не перевірено і чому.
+Знайдено тестами **6 із 6** закладених дефектів (норматив для 5 осіб — ≥ 5). Поза цим переліком — дефект demo (Issue #10) і червоний UI-тест TC-025 (Issue #12): це не дефекти модуля v1.
 
-1. **TC-004.** Кейс очікує картки «Single», «Double», «Suite» після «Check Availability», а чернетка перевіряє лише параметри посилань. Додати перевірку трьох карток. Дати: у кейсі `03/01/2027` – `03/03/2027` у форматі en-US (мм/дд/рррр, GUI-20), у чернетці — `LocalDate.now()+30/+32` у форматі `dd/MM/yyyy`. Динамічні дати допустимі (кейс із фіксованими датами з часом стане минулим), але формат має відповідати locale браузера: запускати Chrome з `--lang=en-US` і вводити `MM/dd/yyyy`, або записати в коментарі, яку locale використано.
-2. **TC-021, TC-022.** Demo відхиляє повідомлення і показує помилку з назвою поля **під** кнопкою «Submit», а кейси кажуть «над кнопкою». Це розбіжність формулювання кейсу, а не дефект: F-70 вимагає повідомлення про помилки, але не задає його розташування. Кейси проходять. Тест не має перевіряти розташування помилки; рекомендовано перевіряти текст помилки з назвою поля. Формулювання ОР кроку 8 у `test-cases.xlsx` варто уточнити («під кнопкою «Submit»» або «біля кнопки»). Хибне посилання на Issue #10 прибрано (коміт 6c5f7ac). Див. також розд. 3а.
-3. **TC-023.** У кейсі кроки 5–6 — «Logout» і повернення на сторінку входу; очікування кроку 4 — перелік номерів. Чернетка перевіряє розділи меню. Додати перевірку переліку номерів. Крок «Logout» можна не дублювати, бо його перевіряє TC-025, але це треба записати в коментарі.
-4. **TC-024.** Кейс посилається на **F-80 і GUI-70** (у чернетці лише F-80). Дані кейсу — `wrongpass1` (у чернетці `wrong_password`). Частину ОР «поля позначено як помилкові» demo не виконує — це **BUG-003** спринта 3. Тест може її не перевіряти, але з коментарем «не перевіряється — BUG-003». Повідомлення «Invalid credentials» кейс не вимагає: залишити як додаткову м'яку перевірку.
-5. **TC-025.** Кейс посилається на **F-85 і S-10** (у чернетці лише F-85). F-85 у SRS 1.1: «після цього система повертає на сторінку входу». На demo тепер повертає на головну. Це **дефект demo**, а не підстава змінити очікуване. Тест `logoutReturnsToLoginPage` перевіряє очікуваний результат кейсу повністю: після «Logout» — сторінка входу. На demo він **червоний навмисно** — дефект demo **Issue #12** (мітки `bug`, `demo`, `sprint:4`; інший дефект, ніж у TC-021/022). Тест не вимикається і не «підганяється» (§4.9). Хибне посилання на Issue #10 прибрано (коміт 6c5f7ac). Див. також розд. 3а.
+## 4. Норматив (план / факт)
 
+| Норматив (5 осіб) | План | Факт | Примітка |
+|---|---|---|---|
+| Юніт-тестів (параметризований метод = 1 тест) | ≥ 20 | **43**: AvailabilityTest 15, PriceCalculatorTotalTest 10, BookingValidatorTest 7, PriceCalculatorSeasonTest 6, BookingContactsTest 5 | ✅; `ExampleTest` (2) не рахується; усього методів у прогоні 45 |
+| Юніт-тестів на особу | ≥ 3 | Шкарупа 15, Чаплюк 10, Бєлянцева 7, Вігура 6, Гетьман 5 | ✅; перевіряється за комітами |
+| UI-сценаріїв WebDriver | ≥ 8 | 11 | TC-001…004, TC-020…025, TC-069 |
+| Дефектів модуля (звіт + тест) | ≥ 5 | 6 тестами; Issues: 6 з 6 (M01 #7, M02 #8, M03 #4, M04 #6, M05 #2, M06 #3) | ✅ |
+| Сценаріїв Selenium IDE | 1–2 | 2 | `selenium-ide/staynow.side` |
 
-## 3а. Звірка з журналом Run 1 спринта 3 (11.11.2026)
+**Підсумок повного прогону** (дані аудитора 25.11.2026 уточнено після видалення дубліката `totalSumsNightPricesAcrossSeasonBoundary`; протокол — `docs/sprint4/surefire-summary.md`):
+`mvn clean test` → Tests run: **129**, Failures: **17**, Errors: **1**; `mvn test -DexcludedGroups=none` → Tests run: **140**, Failures: **18**, Errors: **1**. 18-й Failure — UI-тест TC-025 (Issue #12), 10 з 11 UI зелені. 17 Failures + 1 Error юніт-прогону = 1 + 2 + 9 + 1 + 3 + 2 за BUG-M01…M06 (BUG-M05: 2 Failures + 1 Error).
 
-Стан за поточною версією `execution-log.xlsx`, аркуш «Run 1».
-
-| TC-ID | Статус у Run 1 | Що показує demo зараз | UI-тест | Висновок |
-|---|---|---|---|---|
-| TC-021 | **passed** | повідомлення не надіслано; помилка про поле «Subject» показана під «Submit» | `shortSubjectIsRejected` — зелений | розбіжності немає: кейс і тест проходять. Розташування помилки — неточність формулювання кейсу (п. 3.2), не дефект |
-| TC-022 | **passed** | повідомлення не надіслано; помилка про поле «Message» показана під «Submit» | `shortMessageIsRejected` — зелений | так само, як TC-021 |
-| TC-025 | **passed** | після «Logout» — головна сторінка, а не «Login» | `logoutReturnsToLoginPage` — червоний навмисно | поведінка demo змінилася **після** Run 1 (між 11.11 і 23.11). Це регресія demo, а не підстава змінити очікуване: **Issue #12** (п. 3.5) |
-
-Отже, розбіжність між журналом і UI-тестами лишається тільки для TC-025: у Run 1 він passed, а зараз demo порушує F-85.
-
-Що зробити, щоб журнал і UI-тести не суперечили одне одному: **Шкарупа М.** — повторно виконати TC-025 вручну і записати в `execution-log.xlsx` як Run 2 спринта 4: failed, Bug ID — Issue #12.
-
-## 4. Відкладені кейси (дефект demo, не тестів)
-
-Потік бронювання `/reservation/{id}` станом на 23.11.2026 недоступний: `GET /api/room/{id}` → HTTP 500 для номерів 1, 2, 3; сторінка показує «Loading…» (діагностика Чаплюка Д.). Це той самий дефект, що BUG-001 спринта 3. Кейси **TC-005, TC-007…TC-019, TC-035, TC-036, TC-037, TC-040** автоматизуються після відновлення demo; локатори сторінки номера підготовлено.
-
-## 5. Технічні особливості demo (Чаплюк Д.)
-
-| Особливість | Рішення у тестах |
-|---|---|
-| Кастомний програмний скрол сторінки (`window.scrollY` завжди 0) — звичайний клік по елементах нижче вікна перехоплюється | `StayNowHomePage.clickBelowFold`: `scrollIntoView` + JS-клік; для елементів у вікні (навбар, форма входу) — звичайний `click()` |
-| Поля дат — react-datepicker (текстове поле) | значення замінюються `Ctrl+A` + набір дати; без `Ctrl+A` текст дописується в кінець |
-| SPA (Next.js) рендериться після завантаження | явні очікування `WebDriverWait` + `ExpectedConditions`; без `Thread.sleep` і `implicitlyWait` |
-| Дати в тестах | від `LocalDate.now()` — тест не «застаріває» (BL-10 забороняє заїзд у минулому) |
-
-## 6. Позначки
+## 5. Позначки рецензента матриці
 
 | Роль | Хто | Дата | Позначка |
 |---|---|---|---|
-| Перелік і звірка з кейсами (ТА) | Бєлянцева А. | 25.11.2026 | звірено: 11 TC-ID підтверджено; 5 розбіжностей — розд. 3 |
-| Рецензент (задача 3.3) | Чаплюк Д. | | |
+| Автор (ТА) | Бєлянцева А. | 26.11.2026 | матриця звірена з фінальним прогоном аудитора і позначками 8.5 |
+| Рецензент матриці (задача 3.1) | Вігура С. (КТ) | 28.11.2026 | **схвалено** (задача 3.2): 6/6 дефектів модуля зафіксовано тестами; цифри 129/17/1 і 140/18/1 збігаються з `surefire-summary.md`; внесено уточнення: `seasonAndWeekendCombine` — 4 червоних (було 2), `PriceCalculatorTotalTest` — 10 методів / 19 виконань після видалення дубліката, юніт-тестів 43, TC-025 — Issue #12 |
