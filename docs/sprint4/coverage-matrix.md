@@ -89,7 +89,7 @@ BL-10 не визначає винятків: заборонений вхід п
 | Дефектів модуля (звіт + тест) | ≥ 5 | 6 тестами; Issues: 6 з 6 (M01 #7, M02 #8, M03 #4, M04 #6, M05 #2, M06 #3) | ✅ |
 | Сценаріїв Selenium IDE | 1–2 | 2 | `selenium-ide/staynow.side` |
 
-**Підсумок повного прогону** (дані аудитора 25.11.2026 уточнено після видалення дубліката `totalSumsNightPricesAcrossSeasonBoundary`; протокол — `docs/sprint4/surefire-summary.md`):
+**Підсумок повного прогону** (прогін аудитора 27.11.2026, після видалення дубліката `totalSumsNightPricesAcrossSeasonBoundary`; протокол — `docs/sprint4/surefire-summary.md`):
 `mvn clean test` → Tests run: **129**, Failures: **17**, Errors: **1**; `mvn test -DexcludedGroups=none` → Tests run: **140**, Failures: **18**, Errors: **1**. 18-й Failure — UI-тест TC-025 (Issue #12), 10 з 11 UI зелені. 17 Failures + 1 Error юніт-прогону = 1 + 2 + 9 + 1 + 3 + 2 за BUG-M01…M06 (BUG-M05: 2 Failures + 1 Error).
 
 ## 5. Позначки рецензента матриці
