@@ -53,6 +53,8 @@ public class StayNowHomePage {
     public static final By CONTACT_MESSAGE = By.id("description");
     public static final By CONTACT_SUBMIT = By.cssSelector("#contact button.btn-primary");
     public static final By CONTACT_CARD_BODY = By.cssSelector("#contact .card-body");
+    /** Перелік помилок валідації під контактною формою (demo рендерить після оновлення 27.11.2026). */
+    public static final By CONTACT_ALERTS = By.cssSelector(".alert.alert-danger");
 
     private static final DateTimeFormatter DISPLAY_DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -237,5 +239,28 @@ public class StayNowHomePage {
 
     public String contactSubjectValue() {
         return driver.findElement(CONTACT_SUBJECT).getAttribute("value");
+    }
+
+    /**
+     * Явне очікування переліку помилок валідації ({@code .alert.alert-danger}) під контактною
+     * формою; повертає тексти помилок. З 27.11.2026 demo рендерить перелік помилок після
+     * оновлення стенду, тому ОР «над «Submit» перелік помилок» перевіряється повністю
+     * (Issue #11 закрито 28.11.2026 — не відтворюється).
+     */
+    public List<String> contactValidationErrors(int seconds) {
+        try {
+            List<WebElement> alerts = new WebDriverWait(driver, java.time.Duration.ofSeconds(seconds))
+                    .until(d -> {
+                        List<WebElement> found = d.findElements(CONTACT_ALERTS);
+                        return found.isEmpty() ? null : found;
+                    });
+            return alerts.stream()
+                    .map(e -> e.getText().replaceAll("\\s+", " ").trim())
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList());
+        } catch (TimeoutException e) {
+            throw new AssertionError("перелік помилок (.alert.alert-danger) під формою "
+                    + "не з'явився за " + seconds + " с", e);
+        }
     }
 }

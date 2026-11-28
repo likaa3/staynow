@@ -134,8 +134,8 @@ class StayNowHomePageTest extends UiTestBase {
 
     /** Кейс TC-021 (F-70): тема з 4 символів (нижня межа 5 мінус 1) відхиляється. */
     @Test
-    @DisplayName("TC-021: тема із 4 символів — повідомлення не надіслано, форма лишається "
-            + "(перелік помилок над «Submit» demo не показує — не перевіряється, дефект demo — Issue #11)")
+    @DisplayName("TC-021: тема із 4 символів — повідомлення не надіслано; над «Submit» показано "
+            + "помилку про поле Subject (5–100)")
     void shortSubjectIsRejected() {
         // arrange
         StayNowHomePage page = new StayNowHomePage(driver, wait).open();
@@ -145,23 +145,25 @@ class StayNowHomePageTest extends UiTestBase {
         // act
         page.submitContactForm();
         boolean thanksShown = page.waitThanksAppeared(5);
+        List<String> errors = page.contactValidationErrors(5);
 
-        // assert (ОР TC-021: повідомлення не надіслано — подяки немає, форма лишається.
-        // Зауваження ТА п. 3.2: частину ОР «над Submit перелік помилок про поле Subject»
-        // demo не рендерить — не перевіряється, дефект demo — Issue #11; реєструється в трекері
-        // з міткою demo)
+        // assert (ОР TC-021 повністю: повідомлення не надіслано — подяки немає, форма лишається;
+        // над «Submit» показано перелік помилок із назвою поля і причиною — demo рендерить
+        // помилки валідації після оновлення стенду 27.11.2026)
         assertAll(
                 () -> assertFalse(thanksShown, "подяки бути не має — повідомлення не надіслано"),
                 () -> assertTrue(page.contactFormStillShown(), "форма лишається на сторінці"),
                 () -> assertEquals("Test", page.contactSubjectValue(),
-                        "введене значення теми не змінилось")
+                        "введене значення теми не змінилось"),
+                () -> assertTrue(errors.stream().anyMatch(t -> t.contains("Subject must be between")),
+                        "над «Submit» показано помилку про поле Subject (5–100): " + errors)
         );
     }
 
     /** Кейс TC-022 (F-70): повідомлення з 19 символів (нижня межа 20 мінус 1) відхиляється. */
     @Test
-    @DisplayName("TC-022: повідомлення із 19 символів — повідомлення не надіслано, форма лишається "
-            + "(перелік помилок над «Submit» demo не показує — не перевіряється, дефект demo — Issue #11)")
+    @DisplayName("TC-022: повідомлення із 19 символів — повідомлення не надіслано; над «Submit» показано "
+            + "помилку про поле Message (20–2000)")
     void shortMessageIsRejected() {
         // arrange: рівно 19 символів (граничне a−1 для діапазону 20–2000)
         String nineteenChars = "1234567890123456789";
@@ -173,13 +175,16 @@ class StayNowHomePageTest extends UiTestBase {
         // act
         page.submitContactForm();
         boolean thanksShown = page.waitThanksAppeared(5);
+        List<String> errors = page.contactValidationErrors(5);
 
-        // assert (ОР TC-022: повідомлення не надіслано — подяки немає, форма лишається.
-        // Зауваження ТА п. 3.2: частину ОР «над Submit перелік помилок про поле Message»
-        // demo не рендерить — не перевіряється, дефект demo — Issue #11)
+        // assert (ОР TC-022 повністю: повідомлення не надіслано — подяки немає, форма лишається;
+        // над «Submit» показано перелік помилок із назвою поля і причиною — demo рендерить
+        // помилки валідації після оновлення стенду 27.11.2026)
         assertAll(
                 () -> assertFalse(thanksShown, "подяки бути не має — повідомлення не надіслано"),
-                () -> assertTrue(page.contactFormStillShown(), "форма лишається на сторінці")
+                () -> assertTrue(page.contactFormStillShown(), "форма лишається на сторінці"),
+                () -> assertTrue(errors.stream().anyMatch(t -> t.contains("Message must be between")),
+                        "над «Submit» показано помилку про поле Message (20–2000): " + errors)
         );
     }
 }

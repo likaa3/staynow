@@ -83,25 +83,31 @@ class StayNowAdminAuthTest extends UiTestBase {
     /** Кейс TC-025 (F-85, S-10): вихід адміністратора — після виходу очікується сторінка входу. */
     @Test
     @DisplayName("TC-025: Logout (F-85, крок 6) — після виходу очікується сторінка входу; "
-            + "demo повертає на головну (дефект demo, червоний)")
+            + "записана адреса розділу номерів без входу показує Login (S-10)")
     void logoutReturnsToLoginPage() {
-        // arrange: вхід успішний
+        // arrange: вхід успішний; записуємо адресу розділу номерів (за кейсом TC-025)
         StayNowAdminLoginPage page = new StayNowAdminLoginPage(driver, wait).open();
         page.login("admin", "password").waitDashboard();
+        String roomsUrl = driver.getCurrentUrl();
 
         // act
         page.logoutAndWaitForFrontPage();
+        String urlAfterLogout = driver.getCurrentUrl();
 
-        // assert (ОР TC-025 крок 6 і F-85: «після виходу — сторінка входу адміністратора».
-        // Demo v2.2 повертає на головну — це окремий дефект demo — Issue #12 (мітка `demo`;
-        // BUG-001 спринта 3 не стосується), тому очікування з кейсу ВІДНОВЛЕНО
-        // і тест лишається червоним до виправлення demo)
-        assertAll(
-                () -> assertTrue(driver.getCurrentUrl().contains("/admin"),
-                        "F-85/TC-025: після Logout очікується сторінка входу /admin, фактично: "
-                                + driver.getCurrentUrl()),
-                () -> assertTrue(page.loginFormShown(),
-                        "форма входу адміністратора показана після виходу")
-        );
+        // частина S-10 кейсу: повторне відкриття записаної адреси розділу номерів без входу —
+        // demo показує форму входу (цю частину ОР demo виконує; виконується перед перевіркою
+        // F-85, щоб обидві частини кейсу відпрацювали незалежно від дефекту в першій частині)
+        driver.get(roomsUrl);
+        page.waitLoginForm();
+        assertTrue(page.loginFormShown(),
+                "S-10: записана адреса розділу номерів без входу показує форму Login: "
+                        + driver.getCurrentUrl());
+
+        // assert (F-85, крок 6 кейсу: «після виходу — сторінка входу адміністратора».
+        // Demo повертає на головну — дефект demo, Issue #12; тест червоний до виправлення demo,
+        // не вимикається і не «підганяється» — §4.9)
+        assertTrue(urlAfterLogout.contains("/admin"),
+                "F-85/TC-025: після Logout очікується сторінка входу /admin, фактично: "
+                        + urlAfterLogout);
     }
 }
