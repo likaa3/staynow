@@ -12,6 +12,12 @@
 | Apache Maven | 3.9 (працює і 3.8) | `mvn -v` |
 | Google Chrome | актуальна | драйвер — через Selenium Manager, встановлювати не потрібно |
 
+Де взяти:
+
+- **JDK 17 (Temurin):** https://adoptium.net/temurin/releases/?version=17 — Windows x64, інсталятор `.msi`; у майстрі увімкнути «Set JAVA_HOME variable» і «Add to PATH».
+- **Apache Maven 3.9:** https://maven.apache.org/download.cgi — архів `apache-maven-3.9.x-bin.zip` (Binary zip); розпакувати й додати папку `bin` у `PATH`. Інструкція зі встановлення: https://maven.apache.org/install.html
+- Після встановлення відкрити **новий** термінал і перевірити `java -version` та `mvn -v`.
+
 Інтернет потрібен для першого збирання (`~/.m2`) і для UI-тестів (публічний demo). Клонувати
 репозиторій у шлях **без кирилиці та пробілів** — деякі інструменти некоректно працюють з
 не-ASCII шляхами. Якщо `mvn -v` показує іншу Java — задати `JAVA_HOME` на JDK 17 (розд. 7).
@@ -108,7 +114,9 @@ UI-прогони та їх стабільність — `docs/sprint4/ui-stabil
 > правити тут і в заголовках відповідних `BUG-M0x.md`.
 
 Дефект demo (не модуля): `GET /api/room/{id}` → HTTP 500, сторінка `/reservation/{id}` не
-рендериться; кейси TC-007…TC-019 відкладено до відновлення demo. дефект demo — **Issue #10**.
+рендериться; кейси TC-007…TC-019 відкладено до відновлення demo. Issue з міткою `demo` — **#10**.
+
+UI-тест `StayNowAdminAuthTest#logoutTerminatesSession` (TC-025) червоний у прогоні з UI — **Issue #12**; це не дефект модуля v1 (деталі — `docs/sprint4/surefire-summary.md`).
 
 ## 6. Хто що написав (Спринт 4)
 
