@@ -116,7 +116,7 @@ UI-прогони та їх стабільність — `docs/sprint4/ui-stabil
 Дефект demo (не модуля): `GET /api/room/{id}` → HTTP 500, сторінка `/reservation/{id}` не
 рендериться; кейси TC-007…TC-019 відкладено до відновлення demo. Issue з міткою `demo` — **#10**.
 
-UI-тест `StayNowAdminAuthTest#logoutTerminatesSession` (TC-025) червоний у прогоні з UI — **Issue #12**; це не дефект модуля v1 (деталі — `docs/sprint4/surefire-summary.md`).
+UI-тест `StayNowAdminAuthTest#logoutReturnsToLoginPage` (TC-025) червоний у прогоні з UI — **Issue #12**; це не дефект модуля v1 (деталі — `docs/sprint4/surefire-summary.md`).
 
 ## 6. Хто що написав (Спринт 4)
 

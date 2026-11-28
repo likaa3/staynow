@@ -52,6 +52,8 @@ mvn test -DexcludedGroups=none    # юніт + UI, два прогони пос�
 
 ## Фінальні цифри (після видалення дубліката)
 
+Прогін аудитора (Гетьман Є.), 27.11.2026.
+
 | Команда | Tests run | Failures | Errors | Результат |
 |---|---|---|---|---|
 | `mvn clean test` | **129** | **17** | **1** | `BUILD FAILURE` (очікувано) |
@@ -75,7 +77,7 @@ mvn test -DexcludedGroups=none    # юніт + UI, два прогони пос�
 
 | Клас.метод | Failures | Errors | Issue |
 |---|---|---|---|
-| `StayNowAdminAuthTest.logoutTerminatesSession` (TC-025) | 1 | 0 | #12 |
+| `StayNowAdminAuthTest.logoutReturnsToLoginPage` (TC-025) | 1 | 0 | #12 |
 
 Це **не дефект модуля v1**: тест працює з публічним demo, а не з кодом `staynow`. Він
 не входить у 6 закладених дефектів (BUG-M01…M06), тому підсумок «6 із 6» не змінюється.
